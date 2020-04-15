@@ -77,7 +77,9 @@ g_optimizer = torch.optim.Adam(G.parameters(), lr=g_learning_rate, betas=(0.5, 0
 
 # load checkpoint
 ckpt_dir = './output/%s/checkpoints' % experiment_name
-os.mkdir(ckpt_dir)
+if not os.path.exists(ckpt_dir):
+    os.mkdir(ckpt_dir)
+
 try:
     ckpt = torchlib.load_checkpoint(ckpt_dir)
     start_ep = ckpt['epoch']
