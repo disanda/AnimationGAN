@@ -82,14 +82,12 @@ def gradient_penalty(f, real, fake, mode):
             alpha = torch.rand(shape).to(device)
             inter = a + alpha * (b - a)
             return inter
-
         x = torch.tensor(_interpolate(real, fake), requires_grad=True)
         pred = f(x)
         if isinstance(pred, tuple):
             pred = pred[0]
         g = grad(pred, x, grad_outputs=torch.ones(pred.size()).to(device), create_graph=True)[0].view(x.size(0), -1)
         gp = ((g.norm(p=2, dim=1) - 1) ** 2).mean()
-
         return gp
 
     if mode == 'wgan-gp':

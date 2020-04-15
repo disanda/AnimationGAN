@@ -31,6 +31,8 @@ g_learning_rate = 0.001
 n_d = 1
 c_dim = 10
 experiment_name = args.experiment_name
+gp_mode = 'none'#'dragan', 'wgan-gp'
+
 
 # save settings
 if not os.path.exists('./output/%s' % experiment_name):
