@@ -9,8 +9,8 @@ import PIL.Image as Image
 import tensorboardX
 import torch
 import torchvision
-import torchvision.datasets as dsets
-import torchvision.transforms as tforms
+import torchvision.datasets 
+import torchvision.transforms
 import torchlib
 import os
 import tqdm
@@ -21,7 +21,7 @@ import tqdm
 
 # command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='CGAN_default')
+parser.add_argument('--name', dest='experiment_name', default='CGAN_cifar10')
 args = parser.parse_args()
 
 z_dim = 100
@@ -50,14 +50,15 @@ device = torch.device("cuda" if use_gpu else "cpu")
 # ==============================================================================
 
 # data
-transform = tforms.Compose(
-    [tforms.Scale(size=(64, 64), interpolation=Image.BICUBIC),
-     tforms.ToTensor(),
-     tforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)),
-     tforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)]
+transform = torchvision.transforms.Compose(
+    [torchvision.transforms.Scale(size=(64, 64), interpolation=Image.BICUBIC),
+     torchvision.transforms.ToTensor(),
+     torchvision.transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)),
+     torchvision.transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)]
 )
 train_loader = torch.utils.data.DataLoader(
-    dataset=dsets.FashionMNIST('./data/FashionMNIST', train=True, download=True, transform=transform),
+    #dataset=torchvision.datasets.FashionMNIST('./data/FashionMNIST', train=True, download=True, transform=transform),
+    dataset=torchvision.datasets.CIFAR10('./data/CIFAR10', train=True, download=True, transform=transform),
     batch_size=batch_size,
     shuffle=True,
     num_workers=4,
