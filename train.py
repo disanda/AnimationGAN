@@ -83,7 +83,7 @@ if not os.path.exists(ckpt_dir):
     os.mkdir(ckpt_dir)
 
 try:
-    ckpt = torchlib.load_checkpoint(ckpt_dir)
+    ckpt = torch.load(ckpt_dir)
     start_ep = ckpt['epoch']
     D.load_state_dict(ckpt['D'])
     G.load_state_dict(ckpt['G'])
@@ -104,8 +104,10 @@ if not os.path.exists(save_dir):
 # run
 z_sample = torch.randn(c_dim * 10, z_dim).to(device)
 c_sample = torch.tensor(np.concatenate([np.eye(c_dim)] * 10), dtype=z_sample.dtype).to(device)
-for ep in range(start_ep, epoch):
-    for i, (x, c_dense) in enumerate(train_loader):
+for ep in tqdm.trange(epoch):
+    if start_ep != 0:
+        ep = start_ep
+    for i,(x, c_dense) in tqdm.tqdm(train_loader):
         step = ep * len(train_loader) + i + 1
         D.train()
         G.train()
@@ -161,7 +163,7 @@ for ep in range(start_ep, epoch):
                               'G': G.state_dict(),
                               'D_optimizer': d_optimizer.state_dict(),
                               'G_optimizer': g_optimizer.state_dict()},
-                             '%s/Epoch_(%d).ckpt' % (ckpt_dir, ep + 1),
-                             max_keep=30)
+                             '%s/Epoch_(%d).ckpt' % (ckpt_dir, ep + 1)
+                )
 
 
