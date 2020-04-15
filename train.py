@@ -146,7 +146,7 @@ for ep in range(start_ep, epoch):
             x_f_sample = (G(z_sample, c_sample) + 1) / 2.0
 
             save_dir = './output/%s/sample_training' % experiment_name
-            pylib.mkdir(save_dir)
+            os.mkdir(save_dir)
             torchvision.utils.save_image(x_f_sample, '%s/Epoch_(%d)_(%dof%d).jpg' % (save_dir, ep, i + 1, len(train_loader)), nrow=10)
 
     torchlib.save_checkpoint({'epoch': ep + 1,
