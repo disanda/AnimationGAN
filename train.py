@@ -5,7 +5,6 @@ import model
 import loss_norm_gp
 
 import numpy as np
-import pylib
 import PIL.Image as Image
 import tensorboardX
 import torch
@@ -13,7 +12,7 @@ import torchvision
 import torchvision.datasets as dsets
 import torchvision.transforms as tforms
 import torchlib
-
+import os
 
 # ==============================================================================
 # =                                    param                                   =
@@ -34,7 +33,7 @@ c_dim = 10
 experiment_name = args.experiment_name
 
 # save settings
-pylib.mkdir('./output/%s' % experiment_name)
+os.mkdir('./output/%s' % experiment_name)
 with open('./output/%s/setting.txt' % experiment_name, 'w') as f:
     f.write(json.dumps(vars(args), indent=4, separators=(',', ':')))
 
@@ -77,7 +76,7 @@ g_optimizer = torch.optim.Adam(G.parameters(), lr=g_learning_rate, betas=(0.5, 0
 
 # load checkpoint
 ckpt_dir = './output/%s/checkpoints' % experiment_name
-pylib.mkdir(ckpt_dir)
+os.mkdir(ckpt_dir)
 try:
     ckpt = torchlib.load_checkpoint(ckpt_dir)
     start_ep = ckpt['epoch']
