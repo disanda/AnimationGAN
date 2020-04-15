@@ -98,7 +98,7 @@ writer = tensorboardX.SummaryWriter('./output/%s/summaries' % experiment_name)
 
 # sample_training
 save_dir = './output/%s/sample_training' % experiment_name
-if os.path.exists(save_dir):
+if not os.path.exists(save_dir):
     os.mkdir(save_dir)
 
 # run
