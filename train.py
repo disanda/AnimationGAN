@@ -31,6 +31,7 @@ g_learning_rate = 0.001
 n_d = 1
 c_dim = 10
 experiment_name = args.experiment_name
+norm = 'none' #'batch_norm', 'instance_norm'
 
 # save settings
 os.mkdir('./output/%s' % experiment_name)
