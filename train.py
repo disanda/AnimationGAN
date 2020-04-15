@@ -32,6 +32,7 @@ n_d = 1
 c_dim = 10
 experiment_name = args.experiment_name
 norm = 'none' #'batch_norm', 'instance_norm'
+weight_norm = 'none' #'spectral_norm', 'weight_norm'
 
 # save settings
 if not os.path.exists('./output/%s' % experiment_name):
