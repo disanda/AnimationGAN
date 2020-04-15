@@ -108,8 +108,10 @@ c_sample = torch.tensor(np.concatenate([np.eye(c_dim)] * 10), dtype=z_sample.dty
 for ep in tqdm.trange(epoch):
     if start_ep != 0:
         ep = start_ep
-    for i,(x, c_dense) in tqdm.tqdm(train_loader):
+    i = 0
+    for x, c_dense in tqdm.tqdm(train_loader):
         step = ep * len(train_loader) + i + 1
+        i+=1
         D.train()
         G.train()
 
@@ -148,10 +150,6 @@ for ep in tqdm.trange(epoch):
             g_optimizer.step()
 
             writer.add_scalar('G/g_gan_loss', g_gan_loss.data.cpu().numpy(), global_step=step)
-
-        # display
-        if step % 1 == 0:
-            print("Epoch: (%3d) (%5d/%5d)" % (ep, i + 1, len(train_loader)))
 
         # sample
         if step % 100 == 0:
