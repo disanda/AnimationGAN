@@ -156,10 +156,12 @@ for ep in range(start_ep, epoch):
             x_f_sample = (G(z_sample, c_sample) + 1) / 2.0
             torchvision.utils.save_image(x_f_sample, '%s/Epoch_(%d)_(%dof%d).jpg' % (save_dir, ep, i + 1, len(train_loader)), nrow=10)
 
-    torchlib.save_checkpoint({'epoch': ep + 1,
+    torch.save({'epoch': ep + 1,
                               'D': D.state_dict(),
                               'G': G.state_dict(),
-                              'd_optimizer': d_optimizer.state_dict(),
-                              'g_optimizer': g_optimizer.state_dict()},
+                              'D_optimizer': d_optimizer.state_dict(),
+                              'G_optimizer': g_optimizer.state_dict()},
                              '%s/Epoch_(%d).ckpt' % (ckpt_dir, ep + 1),
-                             max_keep=2)
+                             max_keep=30)
+
+
