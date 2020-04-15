@@ -31,7 +31,7 @@ class Generator(nn.Module):
 
 class Discriminator_v1(nn.Module):
     def __init__(self, x_dim, c_dim, dim=64):
-        super(DiscriminatorCGAN, self).__init__()
+        super().__init__()
         norm_fn = _get_norm_fn_2d(norm)
         weight_norm_fn = _get_weight_norm_fn(weight_norm)
         def conv_norm_lrelu(in_dim, out_dim, kernel_size=3, stride=1, padding=1):
