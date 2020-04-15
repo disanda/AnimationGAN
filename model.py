@@ -36,7 +36,7 @@ class Discriminator_v1(nn.Module):
         def conv_norm_lrelu(in_dim, out_dim, kernel_size=3, stride=1, padding=1):
             return nn.Sequential(
                 nn.Conv2d(in_dim, out_dim, kernel_size, stride, padding),
-                nn.BatchNorm2d(out_dim)
+                nn.BatchNorm2d(out_dim),
                 nn.LeakyReLU(0.2)
             )
         layers = []
