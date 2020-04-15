@@ -48,10 +48,12 @@ class Discriminator_v1(nn.Module):
         layers.append(conv_norm_lrelu(dim*4,dim*8,kernel_size=4, stride=2, padding=1))#out_dim:512
         layers.append(nn.Conv2d(dim*8, 1, kernel_size=4, stride=1, padding=0))#out_dim:1
 
+        self.net = nn.Sequential(*layers)
+
     def forward(self, x, c):
         # x: (N, x_dim, 32, 32), c: (N, c_dim)
         c = c.view(c.size(0), c.size(1), 1, 1) * torch.ones([c.size(0), c.size(1), x.size(2), x.size(3)], dtype=c.dtype, device=c.device)
-        logit = self.ls(torch.cat([x, c], 1))
+        logit = self.net(torch.cat([x, c], 1))
         return logit
 
 
