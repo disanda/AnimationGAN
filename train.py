@@ -32,7 +32,7 @@ n_d = 1
 c_dim = 10
 experiment_name = args.experiment_name
 gp_mode = 'none'#'dragan', 'wgan-gp'
-
+gp_coef = 1.0
 
 # save settings
 if not os.path.exists('./output/%s' % experiment_name):
