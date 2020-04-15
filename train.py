@@ -13,6 +13,7 @@ import torchvision.datasets as dsets
 import torchvision.transforms as tforms
 import torchlib
 import os
+import tqdm
 
 # ==============================================================================
 # =                                    param                                   =
