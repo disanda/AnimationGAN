@@ -53,7 +53,7 @@ device = torch.device("cuda" if use_gpu else "cpu")
 transform = torchvision.transforms.Compose(
     [torchvision.transforms.Scale(size=(64, 64), interpolation=Image.BICUBIC),
      torchvision.transforms.ToTensor(),
-     torchvision.transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)),
+     #torchvision.transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)), #单通道适用
      torchvision.transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)]
 )
 train_loader = torch.utils.data.DataLoader(
