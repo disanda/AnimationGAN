@@ -9,6 +9,7 @@ class Generator(nn.Module):
             return nn.Sequential(
                 nn.ConvTranspose2d(in_dim, out_dim, kernel_size, stride, padding, output_padding),
                 nn.BatchNorm2d(out_dim),
+                #'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
                 nn.ReLU()
             )
 
