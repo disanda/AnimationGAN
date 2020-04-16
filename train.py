@@ -22,7 +22,7 @@ parser.add_argument('--name', dest='experiment_name', default='CGAN_cifar10_noNo
 args = parser.parse_args()
 
 z_dim = 100
-epoch = 50
+epoch = 60
 batch_size = 64
 d_learning_rate = 0.0002
 g_learning_rate = 0.001
@@ -56,7 +56,7 @@ transform = torchvision.transforms.Compose(
 )
 train_loader = torch.utils.data.DataLoader(
     #dataset=torchvision.datasets.FashionMNIST('./data/', train=True, download=True, transform=transform),
-    dataset=torchvision.datasets.CIFAR10('./', train=True, download=True, transform=transform),
+    dataset=torchvision.datasets.CIFAR10('./data', train=True, download=True, transform=transform),
     batch_size=batch_size,
     shuffle=True,
     num_workers=4,
@@ -103,7 +103,7 @@ if not os.path.exists(save_dir):
 
 import time
 now = time.asctime(time.localtime(time.time()))
-torchvision.utils.save_image(list(train_loader)[0][0], 'TrueImg%s.jpg'%now, nrow=8)
+torchvision.utils.save_image(list(train_loader)[0][0],os.path.join(save_dir,'/TrueImg%s.jpg'%now), nrow=8)
 #list(train_loader)[i][0].shape=[batch_size,3,64,64],是一组batch图片.. list(train_loader)[i][1].shape=[64],是图片的标签
 
 # Training 
