@@ -5,13 +5,10 @@ import model
 import loss_norm_gp
 
 import numpy as np
-import PIL.Image as Image
 import tensorboardX
 import torch
 import torchvision
-import torchvision.datasets 
-import torchvision.transforms
-import torchlib
+import PIL.Image as Image
 import os
 import tqdm
 
@@ -21,7 +18,7 @@ import tqdm
 
 # command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='CGAN_cifar10')
+parser.add_argument('--name', dest='experiment_name', default='CGAN_cifar10_noNorm')
 args = parser.parse_args()
 
 z_dim = 100
@@ -51,14 +48,15 @@ device = torch.device("cuda" if use_gpu else "cpu")
 
 # data
 transform = torchvision.transforms.Compose(
-    [torchvision.transforms.Scale(size=(64, 64), interpolation=Image.BICUBIC),
+    [torchvision.transforms.Resize(size=(64, 64), interpolation=Image.BICUBIC),
      torchvision.transforms.ToTensor(),
      #torchvision.transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)), #单通道适用
-     torchvision.transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)]
+     #torchvision.transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)
+     ]
 )
 train_loader = torch.utils.data.DataLoader(
-    #dataset=torchvision.datasets.FashionMNIST('./data/FashionMNIST', train=True, download=True, transform=transform),
-    dataset=torchvision.datasets.CIFAR10('./data/CIFAR10', train=True, download=True, transform=transform),
+    #dataset=torchvision.datasets.FashionMNIST('./data/', train=True, download=True, transform=transform),
+    dataset=torchvision.datasets.CIFAR10('./', train=True, download=True, transform=transform),
     batch_size=batch_size,
     shuffle=True,
     num_workers=4,
@@ -98,12 +96,17 @@ except:
 # writer
 writer = tensorboardX.SummaryWriter('./output/%s/summaries' % experiment_name)
 
-# sample_training
+# sample
 save_dir = './output/%s/sample_training' % experiment_name
 if not os.path.exists(save_dir):
     os.mkdir(save_dir)
 
-# run
+import time
+now = time.asctime(time.localtime(time.time()))
+torchvision.utils.save_image(list(train_loader)[0][0], 'TrueImg%s.jpg'%now, nrow=8)
+#list(train_loader)[i][0].shape=[batch_size,3,64,64],是一组batch图片.. list(train_loader)[i][1].shape=[64],是图片的标签
+
+# Training 
 z_sample = torch.randn(c_dim * 10, z_dim).to(device)
 c_sample = torch.tensor(np.concatenate([np.eye(c_dim)] * 10), dtype=z_sample.dtype).to(device)
 for ep in tqdm.trange(epoch):
@@ -153,7 +156,7 @@ for ep in tqdm.trange(epoch):
             writer.add_scalar('G/g_gan_loss', g_gan_loss.data.cpu().numpy(), global_step=step)
 
         # sample
-        if step % 100 == 0:
+        if step % 200 == 0:
             G.eval()
             x_f_sample = (G(z_sample, c_sample) + 1) / 2.0
             torchvision.utils.save_image(x_f_sample, '%s/Epoch_(%d)_(%dof%d).jpg' % (save_dir, ep, i + 1, len(train_loader)), nrow=10)
