@@ -116,7 +116,7 @@ torchvision.utils.save_image(list(train_loader)[0][0],os.path.join(save_dir,'/Tr
 # Sample
 z_sample = torch.randn(c_dim * 10, z_dim).to(device) #z_sample:[100,100]
 #c_sample = torch.tensor(np.concatenate([np.eye(c_dim)] * 10), dtype=z_sample.dtype).to(device)#c_sample:[100,10]
-c_sample = 0
+c_sample = torch.tensor(0).to(device)
 
 # Training 
 for ep in tqdm.trange(epoch):
@@ -170,6 +170,7 @@ for ep in tqdm.trange(epoch):
         if step % 200 == 0:
             G.eval()
             if c_sample == 0:
+                print(x_f_sample.shape)
                 x_f_sample = (G(z_sample) + 1) / 2.0
             else:
                 x_f_sample = (G(z_sample, c_sample) + 1) / 2.0
