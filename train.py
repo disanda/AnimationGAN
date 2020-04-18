@@ -173,7 +173,7 @@ for ep in tqdm.trange(epoch):
                 x_f_sample = (G(z=z_sample) + 1) / 2.0
                 print(x_f_sample.shape)
             else:
-                x_f_sample = (G(z=z_sample, c_sample) + 1) / 2.0
+                x_f_sample = (G(z=z_sample, c=c_sample) + 1) / 2.0
             torchvision.utils.save_image(x_f_sample, '%s/Epoch_(%d)_(%dof%d).jpg' % (save_dir, ep, i + 1, len(train_loader)), nrow=10)
 
     torch.save({'epoch': ep + 1,
