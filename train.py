@@ -66,7 +66,7 @@ train_loader = torch.utils.data.DataLoader(
 
 # model
 D = model.Discriminator_v1(x_dim=3, c_dim=c_dim).to(device)
-G = model.Generator_v1(z_dim=z_dim, c_dim=c_dim).to(device)
+G = model.Generator_v1(x_dim=z_dim, c_dim=c_dim).to(device)
 
 #save model in txt
 with open('./output/%s/setting.txt' % experiment_name, 'a') as f:

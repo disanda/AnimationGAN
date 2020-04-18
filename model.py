@@ -4,7 +4,7 @@ import loss_norm_gp
 
 #---------------------------------第1版------------------------------
 class Generator_v1(nn.Module):
-    def __init__(self,in_dim,c_dim=0):
+    def __init__(self,x_dim,c_dim=0):
         super().__init__()
         self.block1= nn.Sequential(
                 nn.ConvTranspose2d(in_dim+c_dim,512,kernel_size=4,stride=1,padding=0),
