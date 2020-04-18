@@ -116,7 +116,7 @@ torchvision.utils.save_image(list(train_loader)[0][0],os.path.join(save_dir,'/Tr
 # Sample
 z_sample = torch.randn(c_dim * 10, z_dim).to(device) #z_sample:[100,100]
 #c_sample = torch.tensor(np.concatenate([np.eye(c_dim)] * 10), dtype=z_sample.dtype).to(device)#c_sample:[100,10]
-c_sample = torch.tensor(0).to(device)
+c_sample = torch.tensor(0,dtype=float).to(device)
 
 # Training 
 for ep in tqdm.trange(epoch):
