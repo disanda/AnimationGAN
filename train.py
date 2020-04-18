@@ -18,7 +18,7 @@ import tqdm
 
 # command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='CGAN_cifar10_noNorm')
+parser.add_argument('--name', dest='experiment_name', default='CGAN_cifar10_noNorm_2')
 args = parser.parse_args()
 
 z_dim = 100
@@ -27,7 +27,7 @@ batch_size = 64
 d_learning_rate = 0.0002
 g_learning_rate = 0.001
 n_d = 1
-c_dim = 10
+c_dim = 0
 experiment_name = args.experiment_name
 gp_mode = 'none'#'dragan', 'wgan-gp'
 gp_coef = 1.0
@@ -36,7 +36,7 @@ gp_coef = 1.0
 if not os.path.exists('./output/%s' % experiment_name):
     os.mkdir('./output/%s' % experiment_name)
 with open('./output/%s/setting.txt' % experiment_name, 'w') as f:
-    f.write(json.dumps(vars(args), indent=4, separators=(',', ':')))
+    f.write(json.dumps(vars(args), indent=4, separators=(',', ':')))#字典元素间用'，'分割，key和value间用':'分割
 
 # others
 use_gpu = torch.cuda.is_available()
@@ -66,7 +66,14 @@ train_loader = torch.utils.data.DataLoader(
 
 # model
 D = model.Discriminator_v1(x_dim=3, c_dim=c_dim).to(device)
-G = model.Generator(z_dim=z_dim, c_dim=c_dim).to(device)
+G = model.Generator_v1(z_dim=z_dim, c_dim=c_dim).to(device)
+
+#save model in txt
+with open('./output/%s/setting.txt' % experiment_name, 'a') as f:
+    print('----',file=f)
+    print(G,file=f)
+    print('----',file=f)
+    print(D,file=f)
 
 # gan loss function
 d_loss_fn, g_loss_fn = loss_norm_gp.get_losses_fn('gan') #'gan', 'lsgan', 'wgan', 'hinge_v1', 'hinge_v2'
@@ -96,7 +103,7 @@ except:
 # writer
 writer = tensorboardX.SummaryWriter('./output/%s/summaries' % experiment_name)
 
-# sample
+# sample2img
 save_dir = './output/%s/sample_training' % experiment_name
 if not os.path.exists(save_dir):
     os.mkdir(save_dir)
@@ -106,9 +113,12 @@ now = time.asctime(time.localtime(time.time()))
 torchvision.utils.save_image(list(train_loader)[0][0],os.path.join(save_dir,'/TrueImg%s.jpg'%now), nrow=8)
 #list(train_loader)[i][0].shape=[batch_size,3,64,64],是一组batch图片.. list(train_loader)[i][1].shape=[64],是图片的标签
 
+# Sample
+z_sample = torch.randn(c_dim * 10, z_dim).to(device) #z_sample:[100,100]
+#c_sample = torch.tensor(np.concatenate([np.eye(c_dim)] * 10), dtype=z_sample.dtype).to(device)#c_sample:[100,10]
+c_sample = 0
+
 # Training 
-z_sample = torch.randn(c_dim * 10, z_dim).to(device)
-c_sample = torch.tensor(np.concatenate([np.eye(c_dim)] * 10), dtype=z_sample.dtype).to(device)
 for ep in tqdm.trange(epoch):
     if start_ep != 0:
         ep = start_ep
@@ -121,8 +131,9 @@ for ep in tqdm.trange(epoch):
 
         # train D
         x = x.to(device)
-        z = torch.randn(batch_size, z_dim).to(device)
-        c = torch.tensor(np.eye(c_dim)[c_dense.cpu().numpy()], dtype=z.dtype).to(device)
+        z = torch.randn(batch_size, z_dim).to(device)#[64,100]
+        #c = torch.tensor(np.eye(c_dim)[c_dense.cpu().numpy()], dtype=z.dtype).to(device)#该操作类似one-hot c_dense是一个长度为batch_size=64的标签列表,维度为[64,10]
+        c=0
 
         x_f = G(z, c).detach()
         x_gan_logit = D(x, c)
@@ -158,7 +169,10 @@ for ep in tqdm.trange(epoch):
         # sample
         if step % 200 == 0:
             G.eval()
-            x_f_sample = (G(z_sample, c_sample) + 1) / 2.0
+            if c_sample == 0:
+                x_f_sample = (G(z_sample) + 1) / 2.0
+            else:
+                x_f_sample = (G(z_sample, c_sample) + 1) / 2.0
             torchvision.utils.save_image(x_f_sample, '%s/Epoch_(%d)_(%dof%d).jpg' % (save_dir, ep, i + 1, len(train_loader)), nrow=10)
 
     torch.save({'epoch': ep + 1,
