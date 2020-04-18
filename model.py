@@ -62,7 +62,7 @@ class Discriminator_v1(nn.Module):
                 nn.BatchNorm2d(512),
                 nn.LeakyReLU(0.2)
             )
-        self.conv2=nn.Conv2d(dim*8, 1, kernel_size=4, stride=1, padding=0)#out_dim:1
+        self.conv2=nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=0)#out_dim:1
     def forward(self, x, c=0):
         # x: (N, x_dim, 32, 32), c: (N, c_dim)
         if c==0:
