@@ -170,8 +170,8 @@ for ep in tqdm.trange(epoch):
         if step % 200 == 0:
             G.eval()
             if c_sample == 0:
-                print(x_f_sample.shape)
                 x_f_sample = (G(z_sample) + 1) / 2.0
+                print(x_f_sample.shape)
             else:
                 x_f_sample = (G(z_sample, c_sample) + 1) / 2.0
             torchvision.utils.save_image(x_f_sample, '%s/Epoch_(%d)_(%dof%d).jpg' % (save_dir, ep, i + 1, len(train_loader)), nrow=10)
