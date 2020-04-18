@@ -114,7 +114,7 @@ torchvision.utils.save_image(list(train_loader)[0][0],os.path.join(save_dir,'/Tr
 #list(train_loader)[i][0].shape=[batch_size,3,64,64],是一组batch图片.. list(train_loader)[i][1].shape=[64],是图片的标签
 
 # Sample
-z_sample = torch.randn(c_dim * 10, z_dim).to(device) #z_sample:[100,100]
+z_sample = torch.randn(100, z_dim).to(device) #z_sample:[100,100]
 #c_sample = torch.tensor(np.concatenate([np.eye(c_dim)] * 10), dtype=z_sample.dtype).to(device)#c_sample:[100,10]
 c_sample = torch.tensor(0,dtype=float).to(device)
 
@@ -170,10 +170,10 @@ for ep in tqdm.trange(epoch):
         if step % 200 == 0:
             G.eval()
             if c_sample == 0:
-                x_f_sample = (G(z_sample) + 1) / 2.0
+                x_f_sample = (G(z=z_sample) + 1) / 2.0
                 print(x_f_sample.shape)
             else:
-                x_f_sample = (G(z_sample, c_sample) + 1) / 2.0
+                x_f_sample = (G(z=z_sample, c_sample) + 1) / 2.0
             torchvision.utils.save_image(x_f_sample, '%s/Epoch_(%d)_(%dof%d).jpg' % (save_dir, ep, i + 1, len(train_loader)), nrow=10)
 
     torch.save({'epoch': ep + 1,
