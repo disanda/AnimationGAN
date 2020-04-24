@@ -3,6 +3,7 @@ import torch.nn as nn
 import loss_norm_gp
 
 #---------------------------------第1版------------------------------
+#kernel_size是4，stride是1-2-2-2-2, padding是0-1-1-1-1
 class Generator_v1(nn.Module):
     def __init__(self,x_dim,c_dim=0):
         super().__init__()
@@ -39,7 +40,7 @@ class Generator_v1(nn.Module):
         y = self.block2(y) # 4*4-->8*8
         y = self.block3(y) # 8*8-->16*16
         y = self.block4(y) # 16*16-->32*32
-        y = self.tanh(self.convT(y))
+        y = self.tanh(self.convT(y))# 32*32-->64*64
         return y
 
 class Discriminator_v1(nn.Module):
@@ -77,34 +78,122 @@ class Discriminator_v1(nn.Module):
         y = self.conv2(y)#out_dim:1
         return y
 
-
 #---------------------------------第2版------------------------------
 
 from torch.nn.functional import interpolate
 class Generator_v2(nn.Module):
-    def __init__(self, z_dim, c_dim):
+    def __init__(self, x_dim, c_dim=0):#x_dim=512
         super().__init__()
-        self.block=nn.Sequential(
-                nn.Conv2d(in_dim,out_dim,3,padding=1),
+        dim = x_dim+c_dim
+        self.block1=nn.Sequential(
+                nn.ConvTranspose2d(x_dim+c_dim,512,4),
                 nn.LeakyReLU(0.2),
-                nn.Conv2d(out_dim,out_dim,3,padding=1),
+                nn.Conv2d(512,512,3,padding=1),
+                nn.LeakyReLU(0.2)
+            )#1*1->4*4
+        self.block2=nn.Sequential(
+                nn.Conv2d(256,256,padding=1),
+                nn.LeakyReLU(0.2),
+                nn.Conv2d(256,256,3,padding=1),
+                nn.LeakyReLU(0.2)
+            )#4*4->8*8
+        self.block3=nn.Sequential(
+                nn.Conv2d(128,128,3,padding=1),
+                nn.LeakyReLU(0.2),
+                nn.Conv2d(128,128,3,padding=1),
                 nn.LeakyReLU(0.2)
             )
-        self.convT1 = nn.ConvTranspose2d(z_dim+c_dim,z_dim+c_dim,4)
-        self.lrelu = nn.LeakyReLU(0.2) 
-
-        layers = []
-        layers.append(ConvTranspose2d(z_dim+c_dim,z_dim+c_dim,4)) #padding =0
-        layers.append(nn.LeakyReLU(0.2))
-        layers.append(Conv2d(z_dim+c_dim,z_dim+c_dim,(3, 3), padding=1))
-        layers.append(nn.LeakyReLU(0.2))
-        self.net = nn.Sequential(*layers)
-    def forward(self, z, c):
+        self.block4=nn.Sequential(
+                nn.Conv2d(64,64,3,padding=1),
+                nn.LeakyReLU(0.2),
+                nn.Conv2d(64,64,3,padding=1),
+                nn.LeakyReLU(0.2)
+            )
+        self.block5=nn.Sequential(
+                nn.Conv2d(32,32,3,padding=1),
+                nn.LeakyReLU(0.2),
+                nn.Conv2d(32,3,3,padding=1),
+                nn.LeakyReLU(0.2)
+            )
+    def forward(self, z, c=0):
         # z: (N, z_dim), c: (N, c_dim)
-        x = torch.cat([z, c], 1)
-        x = self.net(x.view(x.size(0), x.size(1), 1, 1))
-        return x
+        if c ==0 :
+            y=z
+        else:
+            y = torch.cat([z, c], 1)
+        y = self.block1(y.view(y.size(0), y.size(1), 1, 1))
+        y = interpolate(y, scale_factor=2)
+        y = self.block2(y)
+        y = interpolate(y, scale_factor=2)
+        y = self.block3(y)
+        y = interpolate(y, scale_factor=2)
+        y = self.block4(y)
+        y = interpolate(y, scale_factor=2)
+        y = self.block5(y)
+        return y
 
+class Discriminator_v2(nn.Module):
+    def __init__(self, x_dim, c_dim=0):#x_dim=512
+        super().__init__()
+        self.block1=nn.Sequential(
+                nn.Conv2d(x_dim+c_dim,32,4),
+                nn.LeakyReLU(0.2),
+                nn.Conv2d(32,32,3,padding=1),
+                nn.LeakyReLU(0.2)
+            )#1*1->4*4
+        self.block2=nn.Sequential(
+                nn.Conv2d(64,64,3,padding=1),
+                nn.LeakyReLU(0.2),
+                nn.Conv2d(64,64,3,padding=1),
+                nn.LeakyReLU(0.2)
+            )#4*4->8*8
+        self.block3=nn.Sequential(
+                nn.Conv2d(128,128,3,padding=1),
+                nn.LeakyReLU(0.2),
+                nn.Conv2d(128,128,3,padding=1),
+                nn.LeakyReLU(0.2)
+            )
+        self.block4=nn.Sequential(
+                nn.Conv2d(256,256,3,padding=1),
+                nn.LeakyReLU(0.2),
+                nn.Conv2d(256,256,3,padding=1),
+                nn.LeakyReLU(0.2)
+            )
+        self.block5=nn.Sequential(
+                nn.Conv2d(512,512,3,padding=1),
+                nn.LeakyReLU(0.2),
+                nn.Conv2d(512,1,3,padding=1),
+                nn.LeakyReLU(0.2)
+            )
+        self.downSampler = nn.AvgPool2d(2)
+        self.fc = nn.Conv2d(in_channels, 1, 1)
+    def forward(self, z, c=0):
+        # z: (N, z_dim), c: (N, c_dim)
+        if c ==0 :
+            y=z
+        else:
+            y = torch.cat([z, c], 1)
+        y = self.block1(y.view(y.size(0), y.size(1), 1, 1))
+        y = self.downSampler(y)#64->32
+        y = self.block2(y)
+        y = self.downSampler(y)#32->16
+        y = self.block3(y)
+        y = self.downSampler(y)#16->8
+        y = self.block4(y)
+        y = self.downSampler(y)#8->4
+        y = self.block5(y)
+        y = self.fc(y)#4->1
+        #y = y.view(-1)
+        return y
+
+#-----------------infoGAN--------------------多一个网络Q输出C即可
+
+
+
+
+# 打印网络参数
+# a = Generator_v1(100)
+# print('parameters:', sum(param.numel() for param in a.parameters()))
 
 
 

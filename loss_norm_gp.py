@@ -1,13 +1,10 @@
 import torch
 import torch.nn as nn
 import torchlib
-
 from torch.autograd import grad
 
 
-# ==============================================================================
-# =                                loss function                               =
-# ==============================================================================
+#                                 loss function                               
 
 def get_losses_fn(mode):
     if mode == 'gan':
@@ -66,10 +63,10 @@ def get_losses_fn(mode):
     return d_loss_fn, g_loss_fn
 
 
-# ==============================================================================
-# =                                   others                                   =
-# ==============================================================================
 
+#                                    gradient_penalty                                   
+
+#f是判别函数:D
 def gradient_penalty(f, real, fake, mode):
     device = real.device
 
@@ -84,12 +81,11 @@ def gradient_penalty(f, real, fake, mode):
             return inter
         x = torch.tensor(_interpolate(real, fake), requires_grad=True)
         pred = f(x)
-        if isinstance(pred, tuple):
+        if isinstance(pred, tuple):#查看pred是否是元组
             pred = pred[0]
         g = grad(pred, x, grad_outputs=torch.ones(pred.size()).to(device), create_graph=True)[0].view(x.size(0), -1)
         gp = ((g.norm(p=2, dim=1) - 1) ** 2).mean()
         return gp
-
     if mode == 'wgan-gp':
         gp = _gradient_penalty(f, real, fake)
     elif mode == 'dragan':
@@ -98,13 +94,11 @@ def gradient_penalty(f, real, fake, mode):
         gp = torch.tensor(0.0).to(device)
     else:
         raise NotImplementedError
-
     return gp
 
 
-# ==============================================================================
-# =                                    utils                                   =
-# ==============================================================================
+
+#                                     utils                                   
 
 def _get_norm_fn_2d(norm):  # 2d
     if norm == 'batch_norm':

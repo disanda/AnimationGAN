@@ -54,9 +54,10 @@ transform = torchvision.transforms.Compose(
      #torchvision.transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)
      ]
 )
+
 train_loader = torch.utils.data.DataLoader(
-    #dataset=torchvision.datasets.FashionMNIST('./data/', train=True, download=True, transform=transform),
-    dataset=torchvision.datasets.CIFAR10('./data', train=True, download=True, transform=transform),
+    dataset=torchvision.datasets.FashionMNIST('./data/', train=True, download=True, transform=transform),
+    #dataset=torchvision.datasets.CIFAR10('./data', train=True, download=True, transform=transform),
     batch_size=batch_size,
     shuffle=True,
     num_workers=4,
@@ -110,11 +111,11 @@ if not os.path.exists(save_dir):
 
 import time
 now = time.asctime(time.localtime(time.time()))
-torchvision.utils.save_image(list(train_loader)[0][0],os.path.join(save_dir,'/TrueImg%s.jpg'%now), nrow=8)
+torchvision.utils.save_image(list(train_loader)[0][0],'./output/%s/sample_training/TrueImg/%s.jpg'%(experiment_name,now), nrow=8)
 #list(train_loader)[i][0].shape=[batch_size,3,64,64],是一组batch图片.. list(train_loader)[i][1].shape=[64],是图片的标签
 
 # Sample
-z_sample = torch.randn(100, z_dim).to(device) #z_sample:[100,100]
+z_sample = torch.randn(100, z_dim).to(device) #z_sample:[100,100],100个样本
 #c_sample = torch.tensor(np.concatenate([np.eye(c_dim)] * 10), dtype=z_sample.dtype).to(device)#c_sample:[100,10]
 c_sample = torch.tensor(0,dtype=float).to(device)
 
@@ -129,7 +130,7 @@ for ep in tqdm.trange(epoch):
         D.train()
         G.train()
 
-        # train D
+# train D
         x = x.to(device)
         z = torch.randn(batch_size, z_dim).to(device)#[64,100]
         #c = torch.tensor(np.eye(c_dim)[c_dense.cpu().numpy()], dtype=z.dtype).to(device)#该操作类似one-hot c_dense是一个长度为batch_size=64的标签列表,维度为[64,10]
@@ -150,7 +151,7 @@ for ep in tqdm.trange(epoch):
         writer.add_scalar('D/d_gan_loss', (d_x_gan_loss + d_x_f_gan_loss).data.cpu().numpy(), global_step=step)
         writer.add_scalar('D/gp', gp.data.cpu().numpy(), global_step=step)
 
-        # train G
+# train G
         if step % n_d == 0:
             z = torch.randn(batch_size, z_dim).to(device)
 
