@@ -117,7 +117,7 @@ class Generator_v2(nn.Module):
             )
     def forward(self, z, c=False):
         # z: (N, z_dim), c: (N, c_dim)
-        if type(c) ==typel(False) :
+        if type(c) ==type(False) :
             y=z
         else:
             y = torch.cat([z, c], 1)
