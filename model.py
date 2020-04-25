@@ -172,6 +172,7 @@ class Discriminator_v2(nn.Module):
         if type(c) == type(False) :
             y=z
         else:
+            c = c.view(c.size(0), c.size(1), 1, 1) * torch.ones([c.size(0), c.size(1), x.size(2), x.size(3)], dtype=c.dtype, device=c.device)
             y = torch.cat([z, c], 1)
         y = self.block1(y.view(y.size(0), y.size(1), 1, 1))
         y = self.downSampler(y)#64->32
