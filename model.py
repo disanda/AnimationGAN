@@ -174,7 +174,7 @@ class Discriminator_v2(nn.Module):
         else:
             c = c.view(c.size(0), c.size(1), 1, 1) * torch.ones([c.size(0), c.size(1), z.size(2), z.size(3)], dtype=c.dtype, device=c.device)
             y = torch.cat([z, c], 1)
-        y = self.block1(y.view(y.size(0), y.size(1), 1, 1))
+        y = self.block1(y)
         y = self.downSampler(y)#64->32
         y = self.block2(y)
         y = self.downSampler(y)#32->16
