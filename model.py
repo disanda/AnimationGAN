@@ -30,9 +30,9 @@ class Generator_v1(nn.Module):
         self.convT=nn.ConvTranspose2d(64,  3,  kernel_size=4, stride=2, padding=1)
         self.tanh=nn.Tanh()
 
-    def forward(self, z, c=0):
-        # z: (N, z_dim), c: (N, c_dim)
-        if c == 0:
+    def forward(self, z, c=False):
+        # z: (N, z_dim), c: (N, c_dim) or bool
+        if type(c) == type(False):
            y=z
         else:
            y = self.torch.cat([z, c], 1)
@@ -64,9 +64,9 @@ class Discriminator_v1(nn.Module):
                 nn.LeakyReLU(0.2)
             )
         self.conv2=nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=0)#out_dim:1
-    def forward(self, x, c=0):
-        # x: (N, x_dim, 32, 32), c: (N, c_dim)
-        if c==0:
+    def forward(self, x, c=False):
+        # x: (N, x_dim, 32, 32), c: (N, c_dim) or bool
+        if type(c)==type(False):
            y=x
            y = self.lrelu(self.conv1(x))#out_dim:64
         else:
