@@ -78,7 +78,7 @@ class Discriminator_v1(nn.Module):
         y = self.conv2(y)#out_dim:1
         return y
 
-#---------------------------------MSG------------------------------
+#---------------------------------v2:MSG------------------------------
 
 from torch.nn.functional import interpolate
 class Generator_v2(nn.Module):
@@ -112,7 +112,7 @@ class Generator_v2(nn.Module):
         self.block5=nn.Sequential(
                 nn.Conv2d(32,32,3,padding=1),
                 nn.LeakyReLU(0.2),
-                nn.Conv2d(32,3,3,padding=1),
+                nn.Conv2d(32,1,3,padding=1),#如果是RGB就是3，灰度图就是1
                 nn.LeakyReLU(0.2)
             )
     def forward(self, z, c=False):
