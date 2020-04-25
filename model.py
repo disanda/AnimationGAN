@@ -88,25 +88,25 @@ class Generator_v2(nn.Module):
         self.block1=nn.Sequential(
                 nn.ConvTranspose2d(x_dim+c_dim,512,4),
                 nn.LeakyReLU(0.2),
-                nn.Conv2d(512,512,3,padding=1),
+                nn.Conv2d(512,256,3,padding=1),
                 nn.LeakyReLU(0.2)
             )#1*1->4*4
         self.block2=nn.Sequential(
                 nn.Conv2d(256,256,3,padding=1),
                 nn.LeakyReLU(0.2),
-                nn.Conv2d(256,256,3,padding=1),
+                nn.Conv2d(256,128,3,padding=1),
                 nn.LeakyReLU(0.2)
             )#4*4->8*8
         self.block3=nn.Sequential(
                 nn.Conv2d(128,128,3,padding=1),
                 nn.LeakyReLU(0.2),
-                nn.Conv2d(128,128,3,padding=1),
+                nn.Conv2d(128,64,3,padding=1),
                 nn.LeakyReLU(0.2)
             )
         self.block4=nn.Sequential(
                 nn.Conv2d(64,64,3,padding=1),
                 nn.LeakyReLU(0.2),
-                nn.Conv2d(64,64,3,padding=1),
+                nn.Conv2d(64,32,3,padding=1),
                 nn.LeakyReLU(0.2)
             )
         self.block5=nn.Sequential(
@@ -122,13 +122,13 @@ class Generator_v2(nn.Module):
         else:
             y = torch.cat([z, c], 1)
         y = self.block1(y.view(y.size(0), y.size(1), 1, 1))
-        y = interpolate(y, scale_factor=2)
+        y = interpolate(y, scale_factor=2)#4->8
         y = self.block2(y)
-        y = interpolate(y, scale_factor=2)
+        y = interpolate(y, scale_factor=2)#8->16
         y = self.block3(y)
-        y = interpolate(y, scale_factor=2)
+        y = interpolate(y, scale_factor=2)#16->32
         y = self.block4(y)
-        y = interpolate(y, scale_factor=2)
+        y = interpolate(y, scale_factor=2)#32->64
         y = self.block5(y)
         return y
 
