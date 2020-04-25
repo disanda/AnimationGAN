@@ -18,7 +18,7 @@ import tqdm
 
 # command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='CGAN_cifar10_noNorm_2')
+parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST')
 args = parser.parse_args()
 
 z_dim = 100
@@ -116,8 +116,8 @@ torchvision.utils.save_image(list(train_loader)[0][0],'./output/%s/sample_traini
 
 # Sample
 z_sample = torch.randn(100, z_dim).to(device) #z_sample:[100,100],100个样本
-#c_sample = torch.tensor(np.concatenate([np.eye(c_dim)] * 10), dtype=z_sample.dtype).to(device)#c_sample:[100,10]
-c_sample = torch.tensor(0,dtype=float).to(device)
+c_sample = torch.tensor(np.concatenate([np.eye(c_dim)] * 10), dtype=z_sample.dtype).to(device)#c_sample:[100,10]
+#c_sample = torch.tensor(0,dtype=float).to(device)
 
 # Training 
 for ep in tqdm.trange(epoch):
@@ -133,8 +133,8 @@ for ep in tqdm.trange(epoch):
 # train D
         x = x.to(device)
         z = torch.randn(batch_size, z_dim).to(device)#[64,100]
-        #c = torch.tensor(np.eye(c_dim)[c_dense.cpu().numpy()], dtype=z.dtype).to(device)#该操作类似one-hot c_dense是一个长度为batch_size=64的标签列表,维度为[64,10]
-        c=0
+        c = torch.tensor(np.eye(c_dim)[c_dense.cpu().numpy()], dtype=z.dtype).to(device)#该操作类似one-hot c_dense是一个长度为batch_size=64的标签列表,维度为[64,10]
+        #c=0
 
         x_f = G(z, c).detach()
         x_gan_logit = D(x, c)
