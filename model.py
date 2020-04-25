@@ -92,7 +92,7 @@ class Generator_v2(nn.Module):
                 nn.LeakyReLU(0.2)
             )#1*1->4*4
         self.block2=nn.Sequential(
-                nn.Conv2d(256,256,padding=1),
+                nn.Conv2d(256,256,3,padding=1),
                 nn.LeakyReLU(0.2),
                 nn.Conv2d(256,256,3,padding=1),
                 nn.LeakyReLU(0.2)
