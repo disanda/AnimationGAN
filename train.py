@@ -25,7 +25,7 @@ batch_size = 64
 d_learning_rate = 0.0002
 g_learning_rate = 0.001
 n_d = 1
-c_dim = 0
+c_dim = 10
 experiment_name = args.experiment_name
 gp_mode = 'none'#'dragan', 'wgan-gp'
 gp_coef = 1.0
@@ -136,12 +136,6 @@ for ep in tqdm.trange(epoch):
         z = torch.randn(batch_size, z_dim).to(device)#[-1,10]
         c = torch.tensor(np.eye(c_dim)[c_dense.cpu().numpy()], dtype=z.dtype).to(device)#该操作类似one-hot c_dense是一个长度为batch_size=64的标签列表,维度为[-1,10]
         #c=0
-        print(z.shape)
-        print(c_dense.shape)
-        print(c.shape)
-        f1 = torch.cat([z, c], 1)
-        print(f1.shape)
-        
         x_f = G(z, c).detach()
         x_gan_logit = D(x, c)
         x_f_gan_logit = D(x_f, c)
