@@ -138,6 +138,10 @@ for ep in tqdm.trange(epoch):
         c = torch.tensor(np.eye(c_dim)[c_dense.cpu().numpy()], dtype=z.dtype).to(device)#该操作类似one-hot c_dense是一个长度为batch_size=64的标签列表,维度为[-1,10]
         #c=0
         x_f = G(z, c).detach()
+        print('x.shape:')
+        print(x.shape)
+        print('x_f.shape:')
+        print(x_f.shape)
         x_gan_logit = D(x, c)
         x_f_gan_logit = D(x_f, c)
 
