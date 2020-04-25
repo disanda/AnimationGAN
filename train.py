@@ -56,8 +56,9 @@ transform = torchvision.transforms.Compose(
 )
 
 train_loader = torch.utils.data.DataLoader(
-    dataset=torchvision.datasets.FashionMNIST('./data/', train=True, download=True, transform=transform),
+    #dataset=torchvision.datasets.FashionMNIST('./data/', train=True, download=True, transform=transform),
     #dataset=torchvision.datasets.CIFAR10('./data', train=True, download=True, transform=transform),
+    dataset=torchvision.datasets.MNIST('./data/', train=True, download=True, transform=transform),
     batch_size=batch_size,
     shuffle=True,
     num_workers=4,
