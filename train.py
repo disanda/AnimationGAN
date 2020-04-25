@@ -110,8 +110,11 @@ save_dir = './output/%s/sample_training' % experiment_name
 if not os.path.exists(save_dir):
     os.mkdir(save_dir)
 
+#保存真实样本,groundTrue
 import time
 now = time.asctime(time.localtime(time.time()))
+if not os.path.exists('./output/%s/sample_training/TrueImg')
+    os.mkdir(./output/%s/sample_training/TrueImg)
 torchvision.utils.save_image(list(train_loader)[0][0],'./output/%s/sample_training/TrueImg/%s.jpg'%(experiment_name,now), nrow=8)
 #list(train_loader)[i][0].shape=[batch_size,3,64,64],是一组batch图片.. list(train_loader)[i][1].shape=[64],是图片的标签
 
