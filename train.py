@@ -1,9 +1,7 @@
 import argparse
 import json
-
 import model
 import loss_norm_gp
-
 import numpy as np
 import tensorboardX
 import torch
@@ -54,7 +52,6 @@ transform = torchvision.transforms.Compose(
      #torchvision.transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)
      ]
 )
-
 train_loader = torch.utils.data.DataLoader(
     #dataset=torchvision.datasets.FashionMNIST('./data/', train=True, download=True, transform=transform),
     #dataset=torchvision.datasets.CIFAR10('./data', train=True, download=True, transform=transform),
@@ -136,10 +133,13 @@ for ep in tqdm.trange(epoch):
 
 # train D
         x = x.to(device)
-        z = torch.randn(batch_size, z_dim).to(device)#[64,100]
-        c = torch.tensor(np.eye(c_dim)[c_dense.cpu().numpy()], dtype=z.dtype).to(device)#该操作类似one-hot c_dense是一个长度为batch_size=64的标签列表,维度为[64,10]
+        z = torch.randn(batch_size, z_dim).to(device)#[-1,10]
+        c = torch.tensor(np.eye(c_dim)[c_dense.cpu().numpy()], dtype=z.dtype).to(device)#该操作类似one-hot c_dense是一个长度为batch_size=64的标签列表,维度为[-1,10]
         #c=0
-
+        print(z.shape)
+        print(c.shape)
+        f1 = torch.cat([z, c], 1)
+        print(f1.shape)
         x_f = G(z, c).detach()
         x_gan_logit = D(x, c)
         x_f_gan_logit = D(x_f, c)

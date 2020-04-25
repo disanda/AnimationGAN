@@ -35,7 +35,7 @@ class Generator_v1(nn.Module):
         if type(c) == type(False):
            y=z
         else:
-           y = self.torch.cat([z, c], 1)
+           y = torch.cat([z, c], 1)
         y = self.block1(y.view(y.size(0), y.size(1), 1, 1)) #1*1-->4*4,out_dim=512
         y = self.block2(y) # 4*4-->8*8
         y = self.block3(y) # 8*8-->16*16
