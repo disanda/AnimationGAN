@@ -64,7 +64,7 @@ train_loader = torch.utils.data.DataLoader(
 )
 
 # model
-D = model.Discriminator_v1(x_dim=3, c_dim=c_dim).to(device)
+D = model.Discriminator_v1(x_dim=1, c_dim=c_dim).to(device)
 G = model.Generator_v1(x_dim=z_dim, c_dim=c_dim).to(device)
 
 #save model in txt
@@ -137,9 +137,11 @@ for ep in tqdm.trange(epoch):
         c = torch.tensor(np.eye(c_dim)[c_dense.cpu().numpy()], dtype=z.dtype).to(device)#该操作类似one-hot c_dense是一个长度为batch_size=64的标签列表,维度为[-1,10]
         #c=0
         print(z.shape)
+        print(c_dense.shape)
         print(c.shape)
         f1 = torch.cat([z, c], 1)
         print(f1.shape)
+        
         x_f = G(z, c).detach()
         x_gan_logit = D(x, c)
         x_f_gan_logit = D(x_f, c)

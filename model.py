@@ -27,7 +27,7 @@ class Generator_v1(nn.Module):
                 nn.BatchNorm2d(64),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
                 nn.ReLU()
             )
-        self.convT=nn.ConvTranspose2d(64,  3,  kernel_size=4, stride=2, padding=1)
+        self.convT=nn.ConvTranspose2d(64,  1,  kernel_size=4, stride=2, padding=1)
         self.tanh=nn.Tanh()
 
     def forward(self, z, c=False):
