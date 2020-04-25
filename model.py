@@ -138,25 +138,25 @@ class Discriminator_v2(nn.Module):
         self.block1=nn.Sequential(
                 nn.Conv2d(x_dim+c_dim,32,4),
                 nn.LeakyReLU(0.2),
-                nn.Conv2d(32,32,3,padding=1),
+                nn.Conv2d(32,64,3,padding=1),
                 nn.LeakyReLU(0.2)
             )#1*1->4*4
         self.block2=nn.Sequential(
                 nn.Conv2d(64,64,3,padding=1),
                 nn.LeakyReLU(0.2),
-                nn.Conv2d(64,64,3,padding=1),
+                nn.Conv2d(64,128,3,padding=1),
                 nn.LeakyReLU(0.2)
             )#4*4->8*8
         self.block3=nn.Sequential(
                 nn.Conv2d(128,128,3,padding=1),
                 nn.LeakyReLU(0.2),
-                nn.Conv2d(128,128,3,padding=1),
+                nn.Conv2d(128,256,3,padding=1),
                 nn.LeakyReLU(0.2)
             )
         self.block4=nn.Sequential(
                 nn.Conv2d(256,256,3,padding=1),
                 nn.LeakyReLU(0.2),
-                nn.Conv2d(256,256,3,padding=1),
+                nn.Conv2d(256,512,3,padding=1),
                 nn.LeakyReLU(0.2)
             )
         self.block5=nn.Sequential(

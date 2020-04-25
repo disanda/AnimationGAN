@@ -16,7 +16,7 @@ import tqdm
 
 # command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_Normalize')
+parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_Netv2')
 args = parser.parse_args()
 
 z_dim = 100
