@@ -78,7 +78,32 @@ class Discriminator_v1(nn.Module):
         y = self.conv2(y)#out_dim:1
         return y
 
-#---------------------------------第2版------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#---------------------------------MSG------------------------------
 
 from torch.nn.functional import interpolate
 class Generator_v2(nn.Module):
@@ -187,10 +212,6 @@ class Discriminator_v2(nn.Module):
         return y
 
 #-----------------infoGAN--------------------多一个网络Q输出C即可
-
-
-
-
 # 打印网络参数
 # a = Generator_v1(100)
 # print('parameters:', sum(param.numel() for param in a.parameters()))

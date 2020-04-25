@@ -16,7 +16,7 @@ import tqdm
 
 # command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST')
+parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_Normalize')
 args = parser.parse_args()
 
 z_dim = 100
@@ -48,6 +48,7 @@ device = torch.device("cuda" if use_gpu else "cpu")
 transform = torchvision.transforms.Compose(
     [torchvision.transforms.Resize(size=(64, 64), interpolation=Image.BICUBIC),
      torchvision.transforms.ToTensor(),
+     torchvision.transforms.Normalize(mean=[0.5], std=[0.5])
      #torchvision.transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)), #单通道适用
      #torchvision.transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)
      ]
