@@ -14,7 +14,7 @@ import tqdm
 
 # command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_v1_G&D_noBN_D_noLReLU')
+parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_v1_G&D_noBN_G_isLReLU')
 #parser.add_argument('--info', dest='self_animation', default=True)
 args = parser.parse_args()
 
