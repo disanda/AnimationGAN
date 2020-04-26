@@ -158,6 +158,23 @@ class Discriminator_v1_1(nn.Module):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #---------------------------------第2版------------------------------
 class Generator_v2(nn.Module):
     def __init__(self,x_dim,c_dim=0):
