@@ -106,7 +106,6 @@ class Generator_v1_1(nn.Module):
             )
         self.convT=nn.ConvTranspose2d(64,  1,  kernel_size=4, stride=2, padding=1)
         self.tanh=nn.Tanh()
-
     def forward(self, z, c=False):
         # z: (N, z_dim), c: (N, c_dim) or bool
         if type(c) == type(False):

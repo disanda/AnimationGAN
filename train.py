@@ -25,8 +25,8 @@ batch_size = 64
 d_learning_rate = 0.0002
 g_learning_rate = 0.001
 n_d = 1
-#c_dim = 10
-c_dim=0
+c_dim = 10
+#c_dim=0
 experiment_name = args.experiment_name
 gp_mode = 'none'#'dragan', 'wgan-gp'
 gp_coef = 1.0
@@ -122,8 +122,8 @@ torchvision.utils.save_image(list(train_loader)[0][0],'./output/%s/sample_traini
 
 # Sample
 z_sample = torch.randn(100, z_dim).to(device) #z_sample:[100,100],100个样本
-#c_sample = torch.tensor(np.concatenate([np.eye(c_dim)] * 10), dtype=z_sample.dtype).to(device)#c_sample:[100,10]
-c_sample = False
+c_sample = torch.tensor(np.concatenate([np.eye(c_dim)] * 10), dtype=z_sample.dtype).to(device)#c_sample:[100,10]
+#c_sample = False
 
 # Training 
 for ep in tqdm.trange(epoch):
@@ -139,8 +139,8 @@ for ep in tqdm.trange(epoch):
 # train D
         x = x.to(device)
         z = torch.randn(batch_size, z_dim).to(device)#[-1,10]
-        #c = torch.tensor(np.eye(c_dim)[c_dense.cpu().numpy()], dtype=z.dtype).to(device)#该操作类似one-hot c_dense是一个长度为batch_size=64的标签列表,维度为[-1,10]
-        c = False
+        c = torch.tensor(np.eye(c_dim)[c_dense.cpu().numpy()], dtype=z.dtype).to(device)#该操作类似one-hot c_dense是一个长度为batch_size=64的标签列表,维度为[-1,10]
+        #c = False
         x_f = G(z, c).detach()
         x_gan_logit = D(x, c)
         x_f_gan_logit = D(x_f, c)
