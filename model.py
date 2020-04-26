@@ -46,7 +46,7 @@ class Generator_v1(nn.Module):
 class Discriminator_v1(nn.Module):
     def __init__(self,x_dim,c_dim=0):
         super().__init__()
-        self.conv1=nn.Conv2d(x_dim + c_dim, 64,kernel_size=4, stride=2, padding=1)#out_dim:64
+        self.conv1=nn.Conv2d(x_dim + c_dim, 64,kernel_size=4, stride=2, padding=1)#64->32
         self.lrelu=nn.LeakyReLU(0.2)
         self.block1=nn.Sequential(
                 nn.Conv2d(64,128, kernel_size=3, stride=1, padding=1),
@@ -71,12 +71,26 @@ class Discriminator_v1(nn.Module):
            y = self.lrelu(self.conv1(x))#out_dim:64
         else:
            c = c.view(c.size(0), c.size(1), 1, 1) * torch.ones([c.size(0), c.size(1), x.size(2), x.size(3)], dtype=c.dtype, device=c.device)
-           y = self.lrelu(self.conv1(torch.cat([x, c], 1)))#out_dim:64
-        y = self.block1(y)#out_dim:128
-        y = self.block2(y)#out_dim:256
-        y = self.block3(y)#out_dim:512
-        y = self.conv2(y)#out_dim:1
+           y = self.lrelu(self.conv1(torch.cat([x, c], 1)))
+        y = self.block1(y)#32->32
+        y = self.block2(y)#32->32
+        y1 = self.block3(y)#32->32
+        y2 = self.conv2(y1)#32->29 :[-1,c,29,29]
+        return y2,y1
+
+class Mow(nn.Module):
+    def __init__(self, dim):
+        super().__init__()
+        self.block1 = nn.Sequential(
+            nn.Conv2d(512, 128, 4, 1, 0, bias=False),#in:[-1,512,32,32]->[512,128,29,29]
+            nn.LeakyReLU(0.1, inplace=True),
+        )
+        self.block2 = nn.Conv2d(128,2,1)#2维
+    def forward(self, x):
+        y = self.block1(x)
+        y = block2(y)
         return y
+
 
 
 #---------------------------------第1版_改------------------------------

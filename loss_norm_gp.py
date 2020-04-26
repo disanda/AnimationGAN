@@ -56,11 +56,16 @@ def get_losses_fn(mode):
         def g_loss_fn(f_logit):
             f_loss = - f_logit.mean()
             return f_loss
-
     else:
         raise NotImplementedError
-
     return d_loss_fn, g_loss_fn
+
+def info(a,b1,b2):
+    x1 = torch.exp(-b2)
+    x2 = a - b1
+    x3 = x2*x2*x1*(-0.5)
+    loss = (b2+math.log(2*math.pi))/2-x3
+    return torch.mean(loss)
 
 
 

@@ -10,13 +10,12 @@ import PIL.Image as Image
 import os
 import tqdm
 
-# ==============================================================================
 # =                                    param                                   =
-# ==============================================================================
 
 # command line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_v1_G&D_noBN_GD_noReLU')
+#parser.add_argument('--info', dest='self_animation', default=True)
 args = parser.parse_args()
 
 z_dim = 100
@@ -30,6 +29,8 @@ c_dim = 10
 experiment_name = args.experiment_name
 gp_mode = 'none'#'dragan', 'wgan-gp'
 gp_coef = 1.0
+info = False
+
 
 # save settings
 if not os.path.exists('./output/%s' % experiment_name):
@@ -41,9 +42,7 @@ with open('./output/%s/setting.txt' % experiment_name, 'w') as f:
 use_gpu = torch.cuda.is_available()
 device = torch.device("cuda" if use_gpu else "cpu")
 
-# ==============================================================================
 # =                                   setting                                  =
-# ==============================================================================
 
 # data
 transform = torchvision.transforms.Compose(
@@ -66,8 +65,9 @@ train_loader = torch.utils.data.DataLoader(
 )
 
 # model
-D = model.Discriminator_v1_1(x_dim=1, c_dim=c_dim).to(device)
-G = model.Generator_v1_1(x_dim=z_dim, c_dim=c_dim).to(device)
+D = model.Discriminator_v1(x_dim=1, c_dim=c_dim).to(device)
+G = model.Generator_v1(x_dim=z_dim, c_dim=c_dim).to(device)
+M = model.Mow(dim=13).to(device)
 
 #save model in txt
 with open('./output/%s/setting.txt' % experiment_name, 'a') as f:
@@ -78,10 +78,13 @@ with open('./output/%s/setting.txt' % experiment_name, 'a') as f:
 
 # gan loss function
 d_loss_fn, g_loss_fn = loss_norm_gp.get_losses_fn('gan') #'gan', 'lsgan', 'wgan', 'hinge_v1', 'hinge_v2'
+m_loss =  loss_norm_gp.info()
+
 
 # optimizer
 d_optimizer = torch.optim.Adam(D.parameters(), lr=d_learning_rate, betas=(0.5, 0.999))
 g_optimizer = torch.optim.Adam(G.parameters(), lr=g_learning_rate, betas=(0.5, 0.999))
+m_optimizer = torch.optim.Adam(M.parameters(), lr=g_learning_rate, betas=(0.5, 0.999))
 
 # =                                    train                                   =
 
@@ -141,12 +144,15 @@ for ep in tqdm.trange(epoch):
         z = torch.randn(batch_size, z_dim).to(device)#[-1,10]
         c = torch.tensor(np.eye(c_dim)[c_dense.cpu().numpy()], dtype=z.dtype).to(device)#该操作类似one-hot c_dense是一个长度为batch_size=64的标签列表,维度为[-1,10]
         #c = False
+        if mc ==   True:
+            mc = torch.from_numpy(np.random.uniform(-1, 1, size=(self.batch_size, 2))).type(torch.FloatTensor)#[-1,2]
+            c = torch.cat([c,mc],1)
         x_f = G(z, c).detach()
-        x_gan_logit = D(x, c)
-        x_f_gan_logit = D(x_f, c)
+        x_gan_logit,_ = D(x, c)
+        x_f_gan_logit,_ = D(x_f, c)
 
         d_x_gan_loss, d_x_f_gan_loss = d_loss_fn(x_gan_logit, x_f_gan_logit)
-        gp = loss_norm_gp.gradient_penalty(D, x, x_f, mode=gp_mode)
+        gp,_ = loss_norm_gp.gradient_penalty(D, x, x_f, mode=gp_mode)
         d_loss = d_x_gan_loss + d_x_f_gan_loss + gp * gp_coef
 
         D.zero_grad()
@@ -161,7 +167,7 @@ for ep in tqdm.trange(epoch):
             z = torch.randn(batch_size, z_dim).to(device)
 
             x_f = G(z, c)
-            x_f_gan_logit = D(x_f, c)
+            x_f_gan_logit,m_c = D(x_f, c)
 
             g_gan_loss = g_loss_fn(x_f_gan_logit)
             g_loss = g_gan_loss
@@ -171,6 +177,13 @@ for ep in tqdm.trange(epoch):
             g_optimizer.step()
 
             writer.add_scalar('G/g_gan_loss', g_gan_loss.data.cpu().numpy(), global_step=step)
+
+# train M
+        # m = M(m_c)
+
+        # M.zero_grad()
+        # m_loss.backward()
+        # m_optimizer.step()
 
         # sample
         if step % 200 == 0:
