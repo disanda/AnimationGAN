@@ -96,8 +96,6 @@ def gradient_penalty(f, real, fake, mode):
         raise NotImplementedError
     return gp
 
-
-
 #                                     utils                                   
 
 def _get_norm_fn_2d(norm):  # 2d
