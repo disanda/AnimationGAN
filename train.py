@@ -10,7 +10,7 @@ import PIL.Image as Image
 import os
 import tqdm
 
-# =                                    param                                   =
+# ===                                    param                                   =
 
 # command line arguments
 parser = argparse.ArgumentParser()
@@ -42,7 +42,7 @@ with open('./output/%s/setting.txt' % experiment_name, 'w') as f:
 use_gpu = torch.cuda.is_available()
 device = torch.device("cuda" if use_gpu else "cpu")
 
-# =                                   setting                                  =
+# ===                                  setting                                  =
 
 # data
 transform = torchvision.transforms.Compose(
@@ -143,7 +143,7 @@ for ep in tqdm.trange(epoch):
         z = torch.randn(batch_size, z_dim).to(device)#[-1,10]
         c = torch.tensor(np.eye(c_dim)[c_dense.cpu().numpy()], dtype=z.dtype).to(device)#该操作类似one-hot c_dense是一个长度为batch_size=64的标签列表,维度为[-1,10]
         #c = False
-        if mc ==   True:
+        if info ==  True:
             mc = torch.from_numpy(np.random.uniform(-1, 1, size=(self.batch_size, 2))).type(torch.FloatTensor)#[-1,2]
             c = torch.cat([c,mc],1)
         x_f = G(z, c).detach()
