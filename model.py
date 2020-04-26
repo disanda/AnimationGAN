@@ -97,12 +97,12 @@ class Generator_v2(nn.Module):
                 nn.BatchNorm2d(256),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
                 nn.ReLU()
             )
-        self.block3= nn.Sequential(
+        self.block4= nn.Sequential(
                 nn.ConvTranspose2d(256,128,kernel_size=4,stride=2,padding=1),
                 nn.BatchNorm2d(128),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
                 nn.ReLU()
             )
-        self.block4= nn.Sequential(
+        self.block5= nn.Sequential(
                 nn.ConvTranspose2d(128,64,kernel_size=3,stride=2,padding=1),
                 nn.BatchNorm2d(64),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
                 nn.ReLU()
@@ -121,6 +121,7 @@ class Generator_v2(nn.Module):
         y = self.block2(y) # 4*4-->8*8
         y = self.block3(y) # 8*8-->16*16
         y = self.block4(y) # 16*16-->32*32
+        y = self.block5(y)
         y = self.tanh(self.convT(y))# 32*32-->64*64
         return y
 
