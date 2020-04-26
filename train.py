@@ -90,16 +90,19 @@ ckpt_dir = './output/%s/checkpoints' % experiment_name
 if not os.path.exists(ckpt_dir):
     os.mkdir(ckpt_dir)
 
-try:
-    ckpt = torch.load(ckpt_dir)
-    start_ep = ckpt['epoch']
-    D.load_state_dict(ckpt['D'])
-    G.load_state_dict(ckpt['G'])
-    d_optimizer.load_state_dict(ckpt['d_optimizer'])
-    g_optimizer.load_state_dict(ckpt['g_optimizer'])
-except:
-    print(' [*] No checkpoint!')
-    start_ep = 0
+# 加载预训练模型
+# try:
+#     ckpt = torch.load(ckpt_dir)
+#     start_ep = ckpt['epoch']
+#     D.load_state_dict(ckpt['D'])
+#     G.load_state_dict(ckpt['G'])
+#     d_optimizer.load_state_dict(ckpt['d_optimizer'])
+#     g_optimizer.load_state_dict(ckpt['g_optimizer'])
+# except:
+#     print(' [*] No checkpoint!')
+#     start_ep = 0
+print('start training:')
+start_ep = 0
 
 # writer
 writer = tensorboardX.SummaryWriter('./output/%s/summaries' % experiment_name)
@@ -172,9 +175,10 @@ for ep in tqdm.trange(epoch):
         # sample
         if step % 200 == 0:
             G.eval()
+            z_sample = torch.randn(100, z_dim).to(device)#每次生成不固定noise
             if type(c_sample) == type(False):
                 x_f_sample = (G(z=z_sample) + 1) / 2.0
-                print(x_f_sample.shape)
+                #print(x_f_sample.shape)
             else:
                 x_f_sample = (G(z=z_sample, c=c_sample) + 1) / 2.0
             torchvision.utils.save_image(x_f_sample, '%s/Epoch_(%d)_(%dof%d).jpg' % (save_dir, ep, i + 1, len(train_loader)), nrow=10)
