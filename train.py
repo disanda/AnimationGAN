@@ -16,7 +16,7 @@ import tqdm
 
 # command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_v1_G&D_noBN_G_noReLU')
+parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_v1_G&D_noBN_GD_noReLU')
 args = parser.parse_args()
 
 z_dim = 100
