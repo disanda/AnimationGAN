@@ -11,28 +11,29 @@ class Generator_v1(nn.Module):
                 nn.ConvTranspose2d(x_dim+c_dim,512,kernel_size=4,stride=1),
                 #nn.BatchNorm2d(512),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
                 #nn.ReLU()
-                nn.LeakyReLU(0.2)
+                nn.LeakyReLU()
             )
         self.block2= nn.Sequential(
                 nn.ConvTranspose2d(512,256,kernel_size=4,stride=2,padding=1),
                 #nn.BatchNorm2d(256),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
                 #nn.ReLU()
-                nn.LeakyReLU(0.2)
+                nn.LeakyReLU()
             )
         self.block3= nn.Sequential(
                 nn.ConvTranspose2d(256,128,kernel_size=4,stride=2,padding=1),
                 #nn.BatchNorm2d(128),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
                 #nn.ReLU()
-                nn.LeakyReLU(0.2)
+                nn.LeakyReLU()
             )
         self.block4= nn.Sequential(
                 nn.ConvTranspose2d(128,64,kernel_size=4,stride=2,padding=1),
                 #nn.BatchNorm2d(64),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
                 #nn.ReLU()
-                nn.LeakyReLU(0.2)
+                nn.LeakyReLU()
             )
         self.convT=nn.ConvTranspose2d(64,  1,  kernel_size=4, stride=2, padding=1)
         self.tanh=nn.Tanh()
+        self.LRelu=nn.LeakyReLU()
 
     def forward(self, z, c=False):
         # z: (N, z_dim), c: (N, c_dim) or bool
@@ -44,7 +45,7 @@ class Generator_v1(nn.Module):
         y = self.block2(y) # 4*4-->8*8
         y = self.block3(y) # 8*8-->16*16
         y = self.block4(y) # 16*16-->32*32
-        y = self.tanh(self.convT(y))# 32*32-->64*64
+        y = self.LRelu(self.convT(y))# 32*32-->64*64
         return y
 
 class Discriminator_v1(nn.Module):
