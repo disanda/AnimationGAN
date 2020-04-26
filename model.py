@@ -84,7 +84,7 @@ class Generator_v2(nn.Module):
         super().__init__()
         self.block1= nn.Sequential(
                 nn.ConvTranspose2d(x_dim+c_dim,1024,kernel_size=2),#这里卷积核是2，保证可以1*1->2*2
-                nn.BatchNorm2d(512),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
+                nn.BatchNorm2d(1024),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
                 nn.ReLU()
             )
         self.block2= nn.Sequential(
