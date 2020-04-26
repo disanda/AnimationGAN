@@ -9,27 +9,27 @@ class Generator_v1(nn.Module):
         super().__init__()
         self.block1= nn.Sequential(
                 nn.ConvTranspose2d(x_dim+c_dim,512,kernel_size=4,stride=1),
-                nn.BatchNorm2d(512),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
-                #nn.ReLU()
-                nn.LeakyReLU()
+                #nn.BatchNorm2d(512),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
+                nn.ReLU()
+                #nn.LeakyReLU()
             )
         self.block2= nn.Sequential(
                 nn.ConvTranspose2d(512,256,kernel_size=4,stride=2,padding=1),
                 #nn.BatchNorm2d(256),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
-                #nn.ReLU()
-                nn.LeakyReLU()
+                nn.ReLU()
+                #nn.LeakyReLU()
             )
         self.block3= nn.Sequential(
                 nn.ConvTranspose2d(256,128,kernel_size=4,stride=2,padding=1),
-                nn.BatchNorm2d(128),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
-                #nn.ReLU()
-                nn.LeakyReLU()
+                #nn.BatchNorm2d(128),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
+                nn.ReLU()
+                #nn.LeakyReLU()
             )
         self.block4= nn.Sequential(
                 nn.ConvTranspose2d(128,64,kernel_size=4,stride=2,padding=1),
-                nn.BatchNorm2d(64),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
-                #nn.ReLU()
-                nn.LeakyReLU()
+                #nn.BatchNorm2d(64),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
+                nn.ReLU()
+                #nn.LeakyReLU()
             )
         self.convT=nn.ConvTranspose2d(64,  1,  kernel_size=4, stride=2, padding=1)
         self.tanh=nn.Tanh()
@@ -178,14 +178,14 @@ class Mow(nn.Module):
             nn.Conv2d(64, 32, 4, 1, 0, bias=False),#in:[-1,64,4,4]->[-1,32,1,1]
             nn.LeakyReLU(0.1, inplace=True),
         )
-        self.block5 = nn.Conv2d(32,2,1)#out:[-1,2,1,1]
+        self.block5 = nn.Conv2d(32,4,1)#out:[-1,4,1,1]
     def forward(self, x):
         y = self.block1(x)
         y = self.block2(y)
         y = self.block3(y)
         y = self.block4(y)
         y = self.block5(y)
-        y = y.squeeze()#[-1,2]
+        y = y.squeeze()#[-1,4]
         return y
 
 

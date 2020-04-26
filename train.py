@@ -14,8 +14,8 @@ import tqdm
 
 # command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_v1_G_isLReLU')
-#parser.add_argument('--info', dest='self_animation', default=True)
+parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_v1_G_isRulu&noBN')
+parser.add_argument('--info', dest='self_animation', default=True)
 args = parser.parse_args()
 
 z_dim = 100
@@ -178,14 +178,12 @@ for ep in tqdm.trange(epoch):
             writer.add_scalar('G/g_gan_loss', g_gan_loss.data.cpu().numpy(), global_step=step)
 
 # train M
-        # m = M(m_c)#in:[-1,512,32,32],out:[-1,2]
-        # loss = loss_norm_gp.m_loss(mc,m1,m2)
-        # m2 = m[:,1,:,:]
-        # m2 = m2.view(self.batch_size,29*29)
-        # loss = loss_norm_gp.m_loss(mc,m1,m2)
-
+        # m = M(m_c)#in:[-1,512,32,32],out:[-1,4]
+        # loss1 = loss_norm_gp.m_loss(mc,m[-1,0],m[-1,1])
+        # loss2 = loss_norm_gp.m_loss(mc,m[-1,2],m[-1,3])
+        # loss = loss1+loss2
         # M.zero_grad()
-        # m_loss.backward()
+        # loss.backward()
         # m_optimizer.step()
 
         # sample
@@ -195,6 +193,16 @@ for ep in tqdm.trange(epoch):
             if type(c_sample) == type(False):
                 x_f_sample = (G(z=z_sample) + 1) / 2.0
                 #print(x_f_sample.shape)
+            elif info == True:
+                temp_c = torch.linspace(-1, 1, 10)
+                c1 = torch.zeros([batch_size,1])
+                c2 = torch.zeros([batch_size,1])
+                for i in range(batch_size):
+                    c1[i]=temp_c[i%10]
+                    c2[i]=temp_c[i%10]
+                c_sample = torch.cat([c1,c2],-1)
+                c_sample = torch.cat([c_sample,c],-1)
+                x_f_sample = (G(z=z_sample, c=c_sample) + 1) / 2.0
             else:
                 x_f_sample = (G(z=z_sample, c=c_sample) + 1) / 2.0
             torchvision.utils.save_image(x_f_sample, '%s/Epoch_(%d)_(%dof%d).jpg' % (save_dir, ep, i + 1, len(train_loader)), nrow=10)
