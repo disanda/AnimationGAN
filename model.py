@@ -10,22 +10,22 @@ class Generator_v1(nn.Module):
         self.block1= nn.Sequential(
                 nn.ConvTranspose2d(x_dim+c_dim,512,kernel_size=4,stride=1),
                 #nn.BatchNorm2d(512),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
-                #nn.ReLU()
+                nn.ReLU()
             )
         self.block2= nn.Sequential(
                 nn.ConvTranspose2d(512,256,kernel_size=4,stride=2,padding=1),
                 #nn.BatchNorm2d(256),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
-                #nn.ReLU()
+                nn.ReLU()
             )
         self.block3= nn.Sequential(
                 nn.ConvTranspose2d(256,128,kernel_size=4,stride=2,padding=1),
                 #nn.BatchNorm2d(128),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
-                #nn.ReLU()
+                nn.ReLU()
             )
         self.block4= nn.Sequential(
                 nn.ConvTranspose2d(128,64,kernel_size=4,stride=2,padding=1),
                 #nn.BatchNorm2d(64),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
-                #nn.ReLU()
+                nn.ReLU()
             )
         self.convT=nn.ConvTranspose2d(64,  1,  kernel_size=4, stride=2, padding=1)
         self.tanh=nn.Tanh()
@@ -51,17 +51,17 @@ class Discriminator_v1(nn.Module):
         self.block1=nn.Sequential(
                 nn.Conv2d(64,128, kernel_size=3, stride=1, padding=1),
                 #nn.BatchNorm2d(128),
-                nn.LeakyReLU(0.2)
+                #nn.LeakyReLU(0.2)
             )
         self.block2=nn.Sequential(
                 nn.Conv2d(128,256, kernel_size=3, stride=1, padding=1),
                 #nn.BatchNorm2d(256),
-                nn.LeakyReLU(0.2)
+                #nn.LeakyReLU(0.2)
             )
         self.block3=nn.Sequential(
                 nn.Conv2d(256,512, kernel_size=3, stride=1, padding=1),
                 #nn.BatchNorm2d(512),
-                nn.LeakyReLU(0.2)
+                #nn.LeakyReLU(0.2)
             )
         self.conv2=nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=0)#out_dim:1
     def forward(self, x, c=False):
