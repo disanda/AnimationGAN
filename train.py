@@ -78,7 +78,6 @@ with open('./output/%s/setting.txt' % experiment_name, 'a') as f:
 
 # gan loss function
 d_loss_fn, g_loss_fn = loss_norm_gp.get_losses_fn('gan') #'gan', 'lsgan', 'wgan', 'hinge_v1', 'hinge_v2'
-m_loss =  loss_norm_gp.info()
 
 
 # optimizer

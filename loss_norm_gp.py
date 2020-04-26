@@ -60,7 +60,7 @@ def get_losses_fn(mode):
         raise NotImplementedError
     return d_loss_fn, g_loss_fn
 
-def info(a,b1,b2):
+def m_loss(a,b1,b2):
     x1 = torch.exp(-b2)
     x2 = a - b1
     x3 = x2*x2*x1*(-0.5)
