@@ -151,7 +151,7 @@ for ep in tqdm.trange(epoch):
         x_f_gan_logit,_ = D(x_f, c)
 
         d_x_gan_loss, d_x_f_gan_loss = d_loss_fn(x_gan_logit, x_f_gan_logit)
-        gp,_ = loss_norm_gp.gradient_penalty(D, x, x_f, mode=gp_mode)
+        gp = loss_norm_gp.gradient_penalty(D, x, x_f, mode=gp_mode)
         d_loss = d_x_gan_loss + d_x_f_gan_loss + gp * gp_coef
 
         D.zero_grad()
