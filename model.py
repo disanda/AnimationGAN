@@ -51,17 +51,17 @@ class Discriminator_v1(nn.Module):
         self.block1=nn.Sequential(
                 nn.Conv2d(64,128, kernel_size=3, stride=1, padding=1),
                 #nn.BatchNorm2d(128),
-                #nn.LeakyReLU(0.2)
+                nn.LeakyReLU(0.2)
             )
         self.block2=nn.Sequential(
                 nn.Conv2d(128,256, kernel_size=3, stride=1, padding=1),
                 #nn.BatchNorm2d(256),
-                #nn.LeakyReLU(0.2)
+                nn.LeakyReLU(0.2)
             )
         self.block3=nn.Sequential(
                 nn.Conv2d(256,512, kernel_size=3, stride=1, padding=1),
                 #nn.BatchNorm2d(512),
-                #nn.LeakyReLU(0.2)
+                nn.LeakyReLU(0.2)
             )
         self.conv2=nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=0)#out_dim:1
     def forward(self, x, c=False):
@@ -148,23 +148,39 @@ class Discriminator_v1_1(nn.Module):
         else:
            c = c.view(c.size(0), c.size(1), 1, 1) * torch.ones([c.size(0), c.size(1), x.size(2), x.size(3)], dtype=c.dtype, device=c.device)
            y = self.lrelu(self.conv1(torch.cat([x, c], 1)))#out_dim:64
-        y = self.block1(y)#out_dim:128
-        y = self.block2(y)#out_dim:256
-        y2 = self.block3(y)#out_dim:512
-        y1 = self.conv2(y2)#out_dim:1
+        y = self.block1(y)#32->32
+        y = self.block2(y)#32->32
+        y2 = self.block3(y)#32->32
+        y1 = self.conv2(y2)#32->29 :[-1,c,29,29]
         return y1,y2
 
 class Mow(nn.Module):
     def __init__(self, dim):
         super().__init__()
         self.block1 = nn.Sequential(
-            nn.Conv2d(512, 128, 4, 1, 0, bias=False),#in:[-1,512,32,32]->[512,128,29,29]
+            nn.Conv2d(512, 256, 4, 2, 1, bias=False),#in:[-1,512,32,32]->[-1,256,16,16]
             nn.LeakyReLU(0.1, inplace=True),
         )
-        self.block2 = nn.Conv2d(128,2,1)#2维
+        self.block2 = nn.Sequential(
+            nn.Conv2d(256, 128, 4, 2, 1, bias=False),#in:[-1,256,16,16]->[-1,128,8,8]
+            nn.LeakyReLU(0.1, inplace=True),
+        )
+        self.block3 = nn.Sequential(
+            nn.Conv2d(128, 64, 4, 2, 1, bias=False),#in:[-1,128,8,8]->[-1,64,4,4]
+            nn.LeakyReLU(0.1, inplace=True),
+        )
+        self.block4 = nn.Sequential(
+            nn.Conv2d(64, 32, 4, 1, 0, bias=False),#in:[-1,64,4,4]->[-1,32,1,1]
+            nn.LeakyReLU(0.1, inplace=True),
+        )
+        self.block5 = nn.Conv2d(32,2,1)#out:[-1,2,1,1]
     def forward(self, x):
         y = self.block1(x)
-        y = block2(y)
+        y = self.block2(y)
+        y = self.block3(y)
+        y = self.block4(y)
+        y = self.block5(y)
+        y = y.squeeze()#[-1,2]
         return y
 
 
