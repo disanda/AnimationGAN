@@ -178,15 +178,15 @@ for ep in tqdm.trange(epoch):
             writer.add_scalar('G/g_gan_loss', g_gan_loss.data.cpu().numpy(), global_step=step)
 
 # train M
-        m = M(m_c)#in:[-1,512,32,32],out:[-1,2]
-        loss = loss_norm_gp.m_loss(mc,m1,m2)
-        m2 = m[:,1,:,:]
-        m2 = m2.view(self.batch_size,29*29)
-        loss = loss_norm_gp.m_loss(mc,m1,m2)
+        # m = M(m_c)#in:[-1,512,32,32],out:[-1,2]
+        # loss = loss_norm_gp.m_loss(mc,m1,m2)
+        # m2 = m[:,1,:,:]
+        # m2 = m2.view(self.batch_size,29*29)
+        # loss = loss_norm_gp.m_loss(mc,m1,m2)
 
-        M.zero_grad()
-        m_loss.backward()
-        m_optimizer.step()
+        # M.zero_grad()
+        # m_loss.backward()
+        # m_optimizer.step()
 
         # sample
         if step % 200 == 0:
