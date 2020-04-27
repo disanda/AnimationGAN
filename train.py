@@ -14,7 +14,7 @@ import tqdm
 
 # command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_Info_v1')
+parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_Info_dc6_cc1')
 parser.add_argument('--info', dest='self_animation', default=True)
 args = parser.parse_args()
 
@@ -128,8 +128,10 @@ torchvision.utils.save_image(list(train_loader)[0][0],'./output/%s/sample_traini
 
 # Sample
 z_sample = torch.randn(100, z_dim).to(device) #z_sample:[100,100],100个样本
-c_sample = torch.tensor(np.concatenate([np.eye(d_dim)] * 10), dtype=z_sample.dtype).to(device)#c_sample:[100,10]
+#c_sample = torch.tensor(np.concatenate([np.eye(d_dim)] * 10), dtype=z_sample.dtype).to(device)#c_sample:[100,10]，1-9连续标签
 #c_sample = False
+c_sample = torch.zeros([100,10])
+c_sample[:,5]=1 #全是6
 
 # Training 
 for ep in tqdm.trange(epoch):
@@ -204,7 +206,7 @@ for ep in tqdm.trange(epoch):
                 c2 = torch.zeros([100,1])
                 for i2 in range(100):
                     c1[i2]=temp_c[i2%10]
-                    c2[i2]=temp_c[i2%10]
+                    #c2[i2]=temp_c[i2%10]
                 c_con = torch.cat([c1,c2],-1)#[-1,2]
                 c_con = c_con.to(device)
                 c_all = torch.cat([c_sample,c_con],-1)#[-1,10+2]
