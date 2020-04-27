@@ -171,7 +171,7 @@ for ep in tqdm.trange(epoch):
             z = torch.randn(batch_size, z_dim).to(device)
 
             x_f = G(z, c)
-            x_f_gan_logit,m_c.detach() = D(x_f, c)
+            x_f_gan_logit,m_c = D(x_f, c)
 
             g_gan_loss = g_loss_fn(x_f_gan_logit)
             g_loss = g_gan_loss
@@ -183,7 +183,7 @@ for ep in tqdm.trange(epoch):
             writer.add_scalar('G/g_gan_loss', g_gan_loss.data.cpu().numpy(), global_step=step)
 
 # train M
-        m = M(m_c)#in:[-1,512,32,32],out:[-1,4]
+        m = M(m_c.detach())#in:[-1,512,32,32],out:[-1,4]
         loss1 = loss_norm_gp.m_loss(mc,m[-1,0],m[-1,1])
         loss2 = loss_norm_gp.m_loss(mc,m[-1,2],m[-1,3])
         loss = loss1+loss2
