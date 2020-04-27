@@ -208,6 +208,10 @@ for ep in tqdm.trange(epoch):
                 c_sample = torch.cat([c1,c2],-1)
                 c_sample = c_sample.to(device)
                 c_sample = torch.cat([c_sample,c],-1)
+                print('------------------')
+                print(z_sample.shape)
+                print(c_sample.shape)
+                print('------------------')
                 x_f_sample = (G(z=z_sample, c=c_sample) + 1) / 2.0
             else:
                 x_f_sample = (G(z=z_sample, c=c_sample) + 1) / 2.0
