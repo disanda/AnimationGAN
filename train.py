@@ -76,7 +76,7 @@ with open('./output/%s/setting.txt' % experiment_name, 'a') as f:
     print('----',file=f)
     print(D,file=f)
     if info == True:
-        rint('----',file=f)
+        print('----',file=f)
         print(M,file=f) 
 
 # gan loss function
