@@ -130,7 +130,7 @@ torchvision.utils.save_image(list(train_loader)[0][0],'./output/%s/sample_traini
 z_sample = torch.randn(100, z_dim).to(device) #z_sample:[100,100],100个样本
 #c_sample = torch.tensor(np.concatenate([np.eye(d_dim)] * 10), dtype=z_sample.dtype).to(device)#c_sample:[100,10]，1-9连续标签
 #c_sample = False
-c_sample = torch.zeros([100,10])
+c_sample = torch.zeros([100,10]).to(device)
 c_sample[:,5]=1 #全是6
 
 # Training 
