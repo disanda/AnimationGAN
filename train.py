@@ -14,7 +14,7 @@ import tqdm
 
 # command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_v1_G_isRulu&noBN')
+parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_v1_G_isRulu&isBN')
 parser.add_argument('--info', dest='self_animation', default=True)
 args = parser.parse_args()
 
@@ -47,9 +47,9 @@ device = torch.device("cuda" if use_gpu else "cpu")
 # data
 transform = torchvision.transforms.Compose(
     [torchvision.transforms.Resize(size=(64, 64), interpolation=Image.BICUBIC),
-     torchvision.transforms.ToTensor(),
-     torchvision.transforms.Normalize(mean=[0.5], std=[0.5])
-     #torchvision.transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)), #单通道适用
+     torchvision.transforms.ToTensor(),#Img2Tensor
+     torchvision.transforms.Normalize(mean=[0.5], std=[0.5])# 取值范围(0,1)->(-1,1)
+     #torchvision.transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)), #单通道改三通道
      #torchvision.transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)
      ]
 )
