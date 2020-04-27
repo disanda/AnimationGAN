@@ -192,7 +192,7 @@ for ep in tqdm.trange(epoch):
         m_optimizer.step()
 
         # sample
-        if step % 200 == 0:
+        if step % 100 == 0:
             G.eval()
             z_sample = torch.randn(100, z_dim).to(device)#每次生成不固定noise
             if type(c_sample) == type(False):
