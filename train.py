@@ -24,7 +24,7 @@ batch_size = 64
 d_learning_rate = 0.0002
 g_learning_rate = 0.001
 n_d = 1
-c_dim = 12
+c_dim = 14 # 离散10 ，连续2 ,total =10+2*2
 #c_dim=0
 experiment_name = args.experiment_name
 gp_mode = 'none'#'dragan', 'wgan-gp'
