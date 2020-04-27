@@ -200,17 +200,17 @@ for ep in tqdm.trange(epoch):
                 #print(x_f_sample.shape)
             elif info == True:
                 temp_c = torch.linspace(-1, 1, 10)
-                c1 = torch.zeros([batch_size,1])
-                c2 = torch.zeros([batch_size,1])
-                for i in range(batch_size):
+                c1 = torch.zeros([100,1])
+                c2 = torch.zeros([100,1])
+                for i in range(100):
                     c1[i]=temp_c[i%10]
                     c2[i]=temp_c[i%10]
-                c_sample = torch.cat([c1,c2],-1)
-                c_sample = c_sample.to(device)
-                c_sample = torch.cat([c_sample,c],-1)
+                c_con = torch.cat([c1,c2],-1)#[-1,2]
+                c_con = c_con.to(device)
+                c_sample = torch.cat([c_sample,c_con],-1)#[-1,10+2]
                 print('------------------')
-                print(z_sample.shape)
-                print(c_sample.shape)
+                print(z_sample.shape)#[-1,100]
+                print(c_sample.shape)#[-1,12]
                 print('------------------')
                 x_f_sample = (G(z=z_sample, c=c_sample) + 1) / 2.0
             else:
