@@ -202,9 +202,9 @@ for ep in tqdm.trange(epoch):
                 temp_c = torch.linspace(-1, 1, 10)
                 c1 = torch.zeros([100,1])
                 c2 = torch.zeros([100,1])
-                for i in range(100):
-                    c1[i]=temp_c[i%10]
-                    c2[i]=temp_c[i%10]
+                for i2 in range(100):
+                    c1[i2]=temp_c[i2%10]
+                    c2[i2]=temp_c[i2%10]
                 c_con = torch.cat([c1,c2],-1)#[-1,2]
                 c_con = c_con.to(device)
                 c_all = torch.cat([c_sample,c_con],-1)#[-1,10+2]
