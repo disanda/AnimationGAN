@@ -5,7 +5,7 @@ import loss_norm_gp
 #---------------------------------第1版------------------------------
 #kernel_size是4，stride是1-2-2-2-2, padding是0-1-1-1-1
 class Generator_v1(nn.Module):
-    def __init__(self,x_dim,c_dim=0):
+    def __init__(self,x_dim,dim=0):
         super().__init__()
         self.block1= nn.Sequential(
                 nn.ConvTranspose2d(x_dim+c_dim,512,kernel_size=4,stride=1),
@@ -49,7 +49,7 @@ class Generator_v1(nn.Module):
         return y
 
 class Discriminator_v1(nn.Module):
-    def __init__(self,x_dim,c_dim=0):
+    def __init__(self,x_dim,dim=0):
         super().__init__()
         self.conv1=nn.Conv2d(x_dim + c_dim, 64,kernel_size=4, stride=2, padding=1)#64->32
         self.lrelu=nn.LeakyReLU(0.2)
@@ -87,10 +87,10 @@ class Discriminator_v1(nn.Module):
 #---------------------------------第1版_改------------------------------
 #kernel_size是4，stride是1-2-2-2-2, padding是0-1-1-1-1
 class Generator_v1_1(nn.Module):
-    def __init__(self,x_dim,c_dim=0):
+    def __init__(self,x_dim,dim=0):
         super().__init__()
         self.block1= nn.Sequential(
-                nn.ConvTranspose2d(x_dim+c_dim,512,kernel_size=4,stride=1),
+                nn.ConvTranspose2d(x_dim+dim,512,kernel_size=4,stride=1),
                 nn.BatchNorm2d(512),#'batch_norm', 'instance_norm','spectral_norm', 'weight_norm'
                 nn.ReLU()
             )
@@ -125,9 +125,9 @@ class Generator_v1_1(nn.Module):
         return y
 
 class Discriminator_v1_1(nn.Module):
-    def __init__(self,x_dim,c_dim=0):
+    def __init__(self,x_dim,dim=0):
         super().__init__()
-        self.conv1=nn.Conv2d(x_dim + c_dim, 64,kernel_size=4, stride=2, padding=1)#out_dim:64
+        self.conv1=nn.Conv2d(x_dim + dim, 64,kernel_size=4, stride=2, padding=1)#out_dim:64
         self.lrelu=nn.LeakyReLU(0.2)
         self.block1=nn.Sequential(
                 nn.Conv2d(64,128, kernel_size=3, stride=1, padding=1),
