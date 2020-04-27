@@ -209,12 +209,12 @@ for ep in tqdm.trange(epoch):
                 c_con = c_con.to(device)
                 c_all = torch.cat([c_sample,c_con],-1)#[-1,10+2]
                 c_all = c_all.to(device)
-                print('------------------')
-                print(z_sample.shape)#[-1,100]
-                print(c_sample.shape)#[-1,10]
-                print(c_con.shape)#[-1,10]
-                print(c_all.shape)#[-1,10]
-                print('------------------')
+                # print('------------------')
+                # print(z_sample.shape)#[-1,100]
+                # print(c_sample.shape)#[-1,10]
+                # print(c_con.shape)#[-1,10]
+                # print(c_all.shape)#[-1,10]
+                # print('------------------')
                 x_f_sample = (G(z=z_sample, c=c_all) + 1) / 2.0
             else:
                 x_f_sample = (G(z=z_sample, c=c_sample) + 1) / 2.0
