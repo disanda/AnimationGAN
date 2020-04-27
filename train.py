@@ -207,12 +207,15 @@ for ep in tqdm.trange(epoch):
                     c2[i]=temp_c[i%10]
                 c_con = torch.cat([c1,c2],-1)#[-1,2]
                 c_con = c_con.to(device)
-                c_sample = torch.cat([c_sample,c_con],-1)#[-1,10+2]
+                c_all = torch.cat([c_sample,c_con],-1)#[-1,10+2]
+                c_all = c_all.to(device)
                 print('------------------')
                 print(z_sample.shape)#[-1,100]
-                print(c_sample.shape)#[-1,12]
+                print(c_sample.shape)#[-1,10]
+                print(c_con.shape)#[-1,10]
+                print(c_all.shape)#[-1,10]
                 print('------------------')
-                x_f_sample = (G(z=z_sample, c=c_sample) + 1) / 2.0
+                x_f_sample = (G(z=z_sample, c=c_all) + 1) / 2.0
             else:
                 x_f_sample = (G(z=z_sample, c=c_sample) + 1) / 2.0
             torchvision.utils.save_image(x_f_sample, '%s/Epoch_(%d)_(%dof%d).jpg' % (save_dir, ep, i + 1, len(train_loader)), nrow=10)
