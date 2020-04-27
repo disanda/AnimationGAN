@@ -148,6 +148,7 @@ for ep in tqdm.trange(epoch):
         #c = False
         if info ==  True:
             mc = torch.from_numpy(np.random.uniform(-1, 1, size=(batch_size, 2))).type(torch.FloatTensor)#[-1,2]
+            mc = mc.to(device)
             c = torch.cat([c,mc],1)
         x_f = G(z, c).detach()
         x_gan_logit,_ = D(x, c)
