@@ -14,7 +14,7 @@ import tqdm
 
 # command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_v1_G_isRulu&isBN')
+parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_Info_v1')
 parser.add_argument('--info', dest='self_animation', default=True)
 args = parser.parse_args()
 
@@ -29,8 +29,8 @@ c_dim = 10
 experiment_name = args.experiment_name
 gp_mode = 'none'#'dragan', 'wgan-gp'
 gp_coef = 1.0
-info = False
-
+#info = False
+info = args.experiment_name
 
 # save settings
 if not os.path.exists('./output/%s' % experiment_name):
@@ -75,6 +75,9 @@ with open('./output/%s/setting.txt' % experiment_name, 'a') as f:
     print(G,file=f)
     print('----',file=f)
     print(D,file=f)
+    if info == True:
+        rint('----',file=f)
+        print(M,file=f) 
 
 # gan loss function
 d_loss_fn, g_loss_fn = loss_norm_gp.get_losses_fn('gan') #'gan', 'lsgan', 'wgan', 'hinge_v1', 'hinge_v2'
@@ -178,13 +181,13 @@ for ep in tqdm.trange(epoch):
             writer.add_scalar('G/g_gan_loss', g_gan_loss.data.cpu().numpy(), global_step=step)
 
 # train M
-        # m = M(m_c)#in:[-1,512,32,32],out:[-1,4]
-        # loss1 = loss_norm_gp.m_loss(mc,m[-1,0],m[-1,1])
-        # loss2 = loss_norm_gp.m_loss(mc,m[-1,2],m[-1,3])
-        # loss = loss1+loss2
-        # M.zero_grad()
-        # loss.backward()
-        # m_optimizer.step()
+        m = M(m_c)#in:[-1,512,32,32],out:[-1,4]
+        loss1 = loss_norm_gp.m_loss(mc,m[-1,0],m[-1,1])
+        loss2 = loss_norm_gp.m_loss(mc,m[-1,2],m[-1,3])
+        loss = loss1+loss2
+        M.zero_grad()
+        loss.backward()
+        m_optimizer.step()
 
         # sample
         if step % 200 == 0:
