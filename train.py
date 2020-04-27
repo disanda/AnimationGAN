@@ -24,7 +24,7 @@ batch_size = 64
 d_learning_rate = 0.0002
 g_learning_rate = 0.001
 n_d = 1
-c_dim = 10
+c_dim = 12
 #c_dim=0
 experiment_name = args.experiment_name
 gp_mode = 'none'#'dragan', 'wgan-gp'
@@ -65,8 +65,8 @@ train_loader = torch.utils.data.DataLoader(
 )
 
 # model
-D = model.Discriminator_v1(x_dim=1, c_dim=c_dim).to(device)
-G = model.Generator_v1(x_dim=z_dim, c_dim=c_dim).to(device)
+D = model.Discriminator_v1_1(x_dim=1, c_dim=c_dim).to(device)
+G = model.Generator_v1_1(x_dim=z_dim, c_dim=c_dim).to(device)
 M = model.Mow(dim=13).to(device)
 
 #save model in txt
