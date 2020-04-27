@@ -171,7 +171,7 @@ for ep in tqdm.trange(epoch):
             z = torch.randn(batch_size, z_dim).to(device)
 
             x_f = G(z, c)
-            x_f_gan_logit,m_c = D(x_f, c)
+            x_f_gan_logit,m_c.detach() = D(x_f, c)
 
             g_gan_loss = g_loss_fn(x_f_gan_logit)
             g_loss = g_gan_loss
