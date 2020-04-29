@@ -128,9 +128,9 @@ for i in range(epoch):
 	for j, (y, c_d) in enumerate(train_loader):
 		z = torch.rand((batch_size, z_dim_num))
 		if SUPERVISED == True:
-			c_d = torch.zeros((batch_size, len_discrete_code)).scatter_(1, c_d.type(torch.LongTensor).unsqueeze(1), 1)
+			c_d = torch.zeros((batch_size, c_d_num)).scatter_(1, c_d.type(torch.LongTensor).unsqueeze(1), 1)
 		else:
-			c_d = torch.from_numpy(np.random.multinomial(1, len_discrete_code * [float(1.0 / len_discrete_code)],size=[batch_size])).type(torch.FloatTensor)#投骰子函数,随机化y_disc_
+			c_d = torch.from_numpy(np.random.multinomial(1, c_d_num * [float(1.0 / c_d_num)],size=[batch_size])).type(torch.FloatTensor)#投骰子函数,随机化y_disc_
 		c_c = torch.from_numpy(np.random.uniform(-1, 1, size=(batch_size, 2))).type(torch.FloatTensor)
 		if gpu_mode:
 			y, z, c_d, c_c = y.cuda(), z.cuda(), c_d.cuda(), c_c.cuda()
