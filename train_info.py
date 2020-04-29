@@ -120,7 +120,7 @@ for i in range(epoch):
 			c_d = torch.from_numpy(np.random.multinomial(1, len_discrete_code * [float(1.0 / len_discrete_code)],size=[batch_size])).type(torch.FloatTensor)#投骰子函数,随机化y_disc_
 		c_c = torch.from_numpy(np.random.uniform(-1, 1, size=(batch_size, 2))).type(torch.FloatTensor)
 		if gpu_mode:
-			y z, c_d, c_c = y.cuda(), z.cuda(), c_d.cuda(), c_c.cuda()
+			y, z, c_d, c_c = y.cuda(), z.cuda(), c_d.cuda(), c_c.cuda()
 # update D network
 		D_optimizer.zero_grad()
 		D_real, _, _ = D(y)
