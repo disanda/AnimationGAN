@@ -85,14 +85,15 @@ for i in range(c_d_num):
 		sample_c2[i*c_d_num+j, 0] = temp_c[i]
 		sample_c2[i*c_d_num+j, 1] = temp_c[j]
 
-sample_c = torch.zeros((sample_num, 2))#[100,2]
-sample_c2 = torch.cat([sample_c2,sample_c],-1)
-sample_c3 = torch.zeros((sample_num, 2))#[100,2]#再来一对潜变量
+#再来一对潜变量
+sample_c_temp = torch.zeros((sample_num, 2))#[100,2]
+sample_c2 = torch.cat([sample_c2,sample_c_temp],-1)
+sample_c3 = torch.zeros((sample_num, 2))#[100,2]
 for i in range(c_d_num):
 	for j in range(c_d_num):
 		sample_c3[i*c_d_num+j, 0] = temp_c[i]
 		sample_c3[i*c_d_num+j, 1] = temp_c[j]
-sample_c2 = torch.cat([sample_c,sample_c3],-1)
+sample_c2 = torch.cat([sample_c_temp,sample_c3],-1)
 
 if gpu_mode == True:
 	sample_z, sample_d, sample_c, sample_z2, sample_d2, sample_c2, sample_c3 = \
