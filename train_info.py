@@ -71,8 +71,8 @@ sample_d = torch.zeros((sample_num, c_d_num)).scatter_(1, temp_d.type(torch.Long
 sample_c = torch.zeros((sample_num, c_c_num))
 # manipulating two continuous code
 sample_z2 = torch.rand((1, z_dim_num)).expand(sample_num, z_dim_num) #[100,62],但是每个样本的noize相同
-sample_d2_ = torch.zeros(sample_num, c_d_num)#[100,10]
-sample_d2_[:, 0] = 1
+sample_d2 = torch.zeros(sample_num, c_d_num)#[100,10]
+sample_d2[:, 0] = 1
 temp_c = torch.linspace(-1, 1, 10)#10个-1->1的随机数
 sample_c2 = torch.zeros((sample_num, 2))#[100,2]
 for i in range(c_d_num):
