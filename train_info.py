@@ -18,8 +18,7 @@ z_dim_num = 100
 c_d_num = 10
 c_c_num = 2
 input_dim = 112 # z =100 ,c_d =10 c_c = 2
-input_size
-
+input_size = 32
 sample_num =100
 
 
@@ -29,7 +28,7 @@ if not os.path.exists(save_dir):
 
 #--------------------------data-----------------------
 transform = torchvision.transforms.Compose(
-    [torchvision.transforms.Resize(size=(64, 64), interpolation=Image.BICUBIC),
+    [torchvision.transforms.Resize(size=(input_size, input_size), interpolation=Image.BICUBIC),
      torchvision.transforms.ToTensor(),#Img2Tensor
      torchvision.transforms.Normalize(mean=[0.5], std=[0.5])# 取值范围(0,1)->(-1,1)
      #torchvision.transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)), #单通道改三通道
