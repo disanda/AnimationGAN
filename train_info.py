@@ -81,7 +81,7 @@ G = model.generator_info(z_dim=z_dim_num, output_dim=1, input_size=input_size, l
 D = model.discriminator_info(input_dim=1, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
 G_optimizer = optim.Adam(G.parameters(), lr=0.0002, betas=(0.5, 0.999))
 D_optimizer = optim.Adam(D.parameters(), lr=0.0002, betas=(0.5, 0.999))
-info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()), lr=0.0002s, betas=(0.5, 0.9))#G,D都更新
+info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()), lr=0.0002, betas=(0.5, 0.9))#G,D都更新
 d_real_flag, d_fake_flag = torch.ones(batch_size, 1), torch.zeros(batch_size, 1)
 if gpu_mode == True:
     d_real_flag, d_fake_flag = d_real_flag.cuda(), d_fake_flag.cuda()
