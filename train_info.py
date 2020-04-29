@@ -12,12 +12,13 @@ import time
 
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='InfoGAN_MNIST_v1')
+parser.add_argument('--name', dest='experiment_name', default='InfoGAN_MNIST_v1_Supv')
 args = parser.parse_args()
 
 
 experiment_name = args.experiment_name
 gpu_mode = True
+SUPERVISED = True
 batch_size = 64
 z_dim_num = 100
 c_d_num = 10
@@ -25,7 +26,7 @@ c_c_num = 2
 input_dim = 112 # z =100 ,c_d =10 c_c = 2
 input_size = 32
 sample_num =100
-epoch =60
+epoch = 60
 
 
 if not os.path.exists('./info_output/'):
