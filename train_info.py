@@ -12,7 +12,7 @@ import time
 
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='InfoGAN_MNIST_v1_Supv')
+parser.add_argument('--name', dest='experiment_name', default='InfoGAN_MNIST_v2_Supv_4c')
 args = parser.parse_args()
 
 
