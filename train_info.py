@@ -169,10 +169,10 @@ for i in range(epoch):
 		image_frame_dim = int(np.floor(np.sqrt(sample_num)))
 		samples = G(sample_z, sample_c, sample_d)
 		samples = (samples + 1) / 2
-		torchvision.utils.save_image(samples, save_dir+'/%d_Epoch—c_d.png' % epoch, nrow=10)
+		torchvision.utils.save_image(samples, save_dir+'/%d_Epoch—c_d.png' % i, nrow=10)
 		samples = G(sample_z2, sample_c2, sample_d2)
 		samples = (samples + 1) / 2
-		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_c.png' % epoch, nrow=10)
+		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_c.png' % i, nrow=10)
 
 # others
 ckpt_dir = './info_output/%s/checkpoints' % experiment_name
