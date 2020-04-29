@@ -25,6 +25,7 @@ c_c_num = 2
 input_dim = 112 # z =100 ,c_d =10 c_c = 2
 input_size = 32
 sample_num =100
+epoch =60
 
 
 if not os.path.exists('./info_output/'):
