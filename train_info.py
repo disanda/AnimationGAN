@@ -8,6 +8,7 @@ import itertools
 import model
 import argparse
 from PIL import Image
+import time
 
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
