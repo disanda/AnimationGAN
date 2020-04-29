@@ -25,10 +25,10 @@ sample_num =100
 
 
 if not os.path.exists('./info_output/'):
-    os.mkdir(save_dir)
+    os.mkdir('./info_output/')
 
 if not os.path.exists('./info_output/%s/'% experiment_name):
-    os.mkdir(save_dir)
+    os.mkdir('./info_output/%s/'% experiment_name)
 
 save_dir = './info_output/%s/sample_training/' % experiment_name
 if not os.path.exists(save_dir):
