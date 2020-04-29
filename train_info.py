@@ -5,6 +5,8 @@ import os
 import numpy as np
 import itertools
 import model
+import argparse
+
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
 parser.add_argument('--name', dest='experiment_name', default='InfoGAN_MNIST_v1')
