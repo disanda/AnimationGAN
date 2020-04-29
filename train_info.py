@@ -1,6 +1,7 @@
 import torch.optim as optim
 import torchvision
 import torch
+import torch.nn as nn
 import os
 import numpy as np
 import itertools
