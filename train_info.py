@@ -4,7 +4,7 @@ import torch
 import os
 import numpy as np
 import itertools
-
+import model
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
 parser.add_argument('--name', dest='experiment_name', default='InfoGAN_MNIST_v1')
@@ -14,8 +14,12 @@ args = parser.parse_args()
 experiment_name = args.experiment_name
 gpu_mode = True
 batch_size = 64
-z_dim = 100
-input_size = 113 # z =100 ,c_d =10 c_c = 2
+z_dim_num = 100
+c_d_num = 10
+c_c_num = 2
+input_dim = 112 # z =100 ,c_d =10 c_c = 2
+input_size
+
 sample_num =100
 
 
@@ -44,9 +48,9 @@ train_loader = torch.utils.data.DataLoader(
 )
 
 # fixed noise & condition
-sample_z = torch.zeros((sample_num, z_dim))
+sample_z = torch.zeros((sample_num, z_dim_num))
 for i in range(c_d_num):
-	sample_z[i * c_d_num] = torch.rand(1, z_dim)#10
+	sample_z[i * c_d_num] = torch.rand(1, z_dim_num)#10
 	for j in range(1, c_d_num):
 		sample_z[i * c_d_num + j] = sample_z[i * c_d_num]#每10个的noize都相同
 		temp = torch.zeros((c_d_num, 1))
@@ -58,7 +62,7 @@ for i in range(c_d_num):
 sample_d = torch.zeros((sample_num, c_d_num)).scatter_(1, temp_d.type(torch.LongTensor), 1)
 sample_c = torch.zeros((sample_num, c_c_num))
 # manipulating two continuous code
-sample_z2 = torch.rand((1, z_dim)).expand(sample_num, z_dim) #[100,62],但是每个样本的noize相同
+sample_z2 = torch.rand((1, z_dim_num)).expand(sample_num, z_dim_num) #[100,62],但是每个样本的noize相同
 sample_d2_ = torch.zeros(sample_num, c_d)#[100,10]
 sample_d2_[:, 0] = 1
 temp_c = torch.linspace(-1, 1, 10)#10个-1->1的随机数
@@ -74,8 +78,8 @@ if gpu_mode == True:
 
 #------------------------model setting-----------------
 
-G = generator_info(input_dim=z_dim, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
-D = discriminator_info(input_dim=1, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
+G = model.generator_info(z_dim=z_dim_num, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
+D = model.discriminator_info(input_dim=1, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
 G_optimizer = optim.Adam(G.parameters(), lr=0.0002, betas=(0.5, 0.999))
 D_optimizer = optim.Adam(D.parameters(), lr=0.0002, betas=(0.5, 0.999))
 info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()), lr=0.0002s, betas=(0.5, 0.9))#G,D都更新
@@ -110,7 +114,7 @@ for i in range(epoch):
 	G.train()
 	epoch_start_time = time.time()
 	for j, (y, c_d) in enumerate(train_loader):
-		z = torch.rand((batch_size, z_dim))
+		z = torch.rand((batch_size, z_dim_num))
 		if SUPERVISED == True:
 			c_d = torch.zeros((batch_size, len_discrete_code)).scatter_(1, c_d.type(torch.LongTensor).unsqueeze(1), 1)
 		else:

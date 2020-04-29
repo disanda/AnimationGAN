@@ -391,7 +391,7 @@ class Discriminator_msg(nn.Module):
 class generator_info(nn.Module):
     # Network Architecture is exactly same as in infoGAN (https://arxiv.org/abs/1606.03657)
     # Architecture : FC1024_BR-FC7x7x128_BR-(64)4dc2s_BR-(1)4dc2s_S
-    def __init__(self, input_dim=100, output_dim=1, input_size=32, len_discrete_code=10, len_continuous_code=2):
+    def __init__(self, z_dim=100, output_dim=1, input_size=32, len_discrete_code=10, len_continuous_code=2):
         super(generator, self).__init__()
         self.input_dim = input_dim
         self.output_dim = output_dim
