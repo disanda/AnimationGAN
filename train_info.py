@@ -71,14 +71,14 @@ sample_d = torch.zeros((sample_num, c_d_num)).scatter_(1, temp_d.type(torch.Long
 sample_c = torch.zeros((sample_num, c_c_num))
 # manipulating two continuous code
 sample_z2 = torch.rand((1, z_dim_num)).expand(sample_num, z_dim_num) #[100,62],但是每个样本的noize相同
-sample_d2_ = torch.zeros(sample_num, c_d)#[100,10]
+sample_d2_ = torch.zeros(sample_num, c_d_num)#[100,10]
 sample_d2_[:, 0] = 1
 temp_c = torch.linspace(-1, 1, 10)#10个-1->1的随机数
 sample_c2 = torch.zeros((sample_num, 2))#[100,2]
-for i in range(c_d):
-	for j in range(c_d):
-		sample_c2[i*c_d+j, 0] = temp_c[i]
-		sample_c2[i*c_d+j, 1] = temp_c[j]
+for i in range(c_d_num):
+	for j in range(c_d_num):
+		sample_c2[i*c_d_num+j, 0] = temp_c[i]
+		sample_c2[i*c_d_num+j, 1] = temp_c[j]
 if gpu_mode == True:
 	sample_z, sample_d, sample_c, sample_z2, sample_d2, sample_c2 = \
 	sample_z.cuda(), sample_d.cuda(), sample_c.cuda(), \
