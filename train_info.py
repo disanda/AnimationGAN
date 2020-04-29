@@ -24,7 +24,13 @@ input_size = 32
 sample_num =100
 
 
-save_dir = './info_output/%s/sample_training' % experiment_name
+if not os.path.exists('./info_output/'):
+    os.mkdir(save_dir)
+
+if not os.path.exists('./info_output/%s/'% experiment_name):
+    os.mkdir(save_dir)
+
+save_dir = './info_output/%s/sample_training/' % experiment_name
 if not os.path.exists(save_dir):
     os.mkdir(save_dir)
 
