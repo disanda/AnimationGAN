@@ -77,6 +77,7 @@ sample_c = torch.zeros((sample_num, c_c_num))
 sample_z2 = torch.rand((1, z_dim_num)).expand(sample_num, z_dim_num) #[100,62],但是每个样本的noize相同
 sample_d2 = torch.zeros(sample_num, c_d_num)#[100,10]
 sample_d2[:, 0] = 1
+
 temp_c = torch.linspace(-1, 1, 10)#10个范围在-1->1的等差数列
 sample_c2 = torch.zeros((sample_num, 2))#[100,2]
 for i in range(c_d_num):
@@ -84,12 +85,14 @@ for i in range(c_d_num):
 		sample_c2[i*c_d_num+j, 0] = temp_c[i]
 		sample_c2[i*c_d_num+j, 1] = temp_c[j]
 
-#再来一对潜变量
-sample_c3 = torch.zeros((sample_num, 2))#[100,2]
+sample_c = torch.zeros((sample_num, 2))#[100,2]
+sample_c2 = torch.cat([sample_c2,sample_c],-1)
+sample_c3 = torch.zeros((sample_num, 2))#[100,2]#再来一对潜变量
 for i in range(c_d_num):
 	for j in range(c_d_num):
 		sample_c3[i*c_d_num+j, 0] = temp_c[i]
 		sample_c3[i*c_d_num+j, 1] = temp_c[j]
+sample_c2 = torch.cat([sample_c,sample_c3],-1)
 
 if gpu_mode == True:
 	sample_z, sample_d, sample_c, sample_z2, sample_d2, sample_c2, sample_c3 = \
