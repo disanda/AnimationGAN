@@ -92,7 +92,7 @@ for i in range(c_d_num):
 		sample_c3[i*c_d_num+j, 1] = temp_c[j]
 
 if gpu_mode == True:
-	sample_z, sample_d, sample_c, sample_z2, sample_d2, sample_c2，sample_c3 = \
+	sample_z, sample_d, sample_c, sample_z2, sample_d2, sample_c2, sample_c3 = \
 	sample_z.cuda(), sample_d.cuda(), sample_c.cuda(), \
 	sample_z2.cuda(), sample_d2.cuda(), sample_c2.cuda(), sample_c3.cuda()
 
