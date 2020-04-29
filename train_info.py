@@ -22,9 +22,9 @@ SUPERVISED = True
 batch_size = 64
 z_dim_num = 100
 c_d_num = 10
-c_c_num = 2
+c_c_num = 4
 input_dim = 112 # z =100 ,c_d =10 c_c = 2
-input_size = 32
+input_size = 64
 sample_num =100
 epoch = 60
 
@@ -77,16 +77,24 @@ sample_c = torch.zeros((sample_num, c_c_num))
 sample_z2 = torch.rand((1, z_dim_num)).expand(sample_num, z_dim_num) #[100,62],但是每个样本的noize相同
 sample_d2 = torch.zeros(sample_num, c_d_num)#[100,10]
 sample_d2[:, 0] = 1
-temp_c = torch.linspace(-1, 1, 10)#10个-1->1的随机数
+temp_c = torch.linspace(-1, 1, 10)#10个范围在-1->1的等差数列
 sample_c2 = torch.zeros((sample_num, 2))#[100,2]
 for i in range(c_d_num):
 	for j in range(c_d_num):
 		sample_c2[i*c_d_num+j, 0] = temp_c[i]
 		sample_c2[i*c_d_num+j, 1] = temp_c[j]
+
+#再来一对潜变量
+sample_c3 = torch.zeros((sample_num, 2))#[100,2]
+for i in range(c_d_num):
+	for j in range(c_d_num):
+		sample_c3[i*c_d_num+j, 0] = temp_c[i]
+		sample_c3[i*c_d_num+j, 1] = temp_c[j]
+
 if gpu_mode == True:
-	sample_z, sample_d, sample_c, sample_z2, sample_d2, sample_c2 = \
+	sample_z, sample_d, sample_c, sample_z2, sample_d2, sample_c2，sample_c3 = \
 	sample_z.cuda(), sample_d.cuda(), sample_c.cuda(), \
-	sample_z2.cuda(), sample_d2.cuda(), sample_c2.cuda()
+	sample_z2.cuda(), sample_d2.cuda(), sample_c2.cuda(), sample_c3.cuda()
 
 #------------------------model setting-----------------
 
@@ -125,13 +133,13 @@ start_time = time.time()
 for i in range(epoch):
 	G.train()
 	epoch_start_time = time.time()
-	for j, (y, c_d) in enumerate(train_loader):
+	for j, (y, c_d_true) in enumerate(train_loader):
 		z = torch.rand((batch_size, z_dim_num))
 		if SUPERVISED == True:
-			c_d = torch.zeros((batch_size, c_d_num)).scatter_(1, c_d.type(torch.LongTensor).unsqueeze(1), 1)
+			c_d = torch.zeros((batch_size, c_d_num)).scatter_(1, c_d_true.type(torch.LongTensor).unsqueeze(1), 1)
 		else:
 			c_d = torch.from_numpy(np.random.multinomial(1, c_d_num * [float(1.0 / c_d_num)],size=[batch_size])).type(torch.FloatTensor)#投骰子函数,随机化y_disc_
-		c_c = torch.from_numpy(np.random.uniform(-1, 1, size=(batch_size, 2))).type(torch.FloatTensor)
+		c_c = torch.from_numpy(np.random.uniform(-1, 1, size=(batch_size, c_c_num))).type(torch.FloatTensor)
 		if gpu_mode:
 			y, z, c_d, c_c = y.cuda(), z.cuda(), c_d.cuda(), c_c.cuda()
 # update D network
@@ -154,7 +162,7 @@ for i in range(epoch):
 		G_loss.backward(retain_graph=True)
 		G_optimizer.step()
 # information loss
-		disc_loss = CE_loss(D_disc, torch.max(c_d, 1)[1])
+		disc_loss = CE_loss(D_disc, torch.max(c_d, 1)[1])#第二个是将Label由one-hot转化为10进制数组
 		cont_loss = MSE_loss(D_cont, c_c)
 		info_loss = disc_loss + cont_loss
 		train_hist['info_loss'].append(info_loss.item())
@@ -173,12 +181,15 @@ for i in range(epoch):
 		samples = G(sample_z2, sample_c2, sample_d2)
 		samples = (samples + 1) / 2
 		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_c.png' % i, nrow=10)
+		samples = G(sample_z2, sample_c3, sample_d2)
+		samples = (samples + 1) / 2
+		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_c2.png' % i, nrow=10)
 
 # others
 ckpt_dir = './info_output/%s/checkpoints' % experiment_name
 if not os.path.exists(ckpt_dir):
     os.mkdir(ckpt_dir)
-torch.save({'epoch': ep + 1,'G': G.state_dict()},'%s/Epoch_(%d).ckpt' % (ckpt_dir, ep + 1))
+torch.save({'epoch': epoch + 1,'G': G.state_dict()},'%s/Epoch_(%d).ckpt' % (ckpt_dir, epoch + 1))
 
 
 
