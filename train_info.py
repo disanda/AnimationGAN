@@ -151,7 +151,7 @@ for i in range(epoch):
 			print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f, info_loss: %.8f" %((i + 1), (j + 1), train_loader.dataset.__len__() // batch_size, D_loss.item(), G_loss.item(), info_loss.item()))
 		train_hist['per_epoch_time'].append(time.time() - epoch_start_time)
 # save2img
-	torch.no_grad():
+	with torch.no_grad():
 		G.eval()
 		image_frame_dim = int(np.floor(np.sqrt(sample_num)))
 		samples = G(sample_z, sample_c, sample_d)
