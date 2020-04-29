@@ -51,7 +51,7 @@ train_loader = torch.utils.data.DataLoader(
     batch_size=batch_size,
     shuffle=True,
     num_workers=4,
-    pin_memory=use_gpu,
+    pin_memory=gpu_mode,
     drop_last=True
 )
 
