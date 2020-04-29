@@ -6,6 +6,7 @@ import numpy as np
 import itertools
 import model
 import argparse
+from PIL import Image
 
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
