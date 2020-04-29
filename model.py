@@ -451,7 +451,7 @@ class discriminator_info(nn.Module):
         x = self.conv(input)
         x = x.view(-1, 128 * (self.input_size // 4) * (self.input_size // 4))
         x = self.fc(x)
-        a = torch.nn.functional.sigmoid(x[:, self.output_dim])
+        a = torch.sigmoid(x[:, self.output_dim])
         b = x[:, self.output_dim:self.output_dim + self.len_continuous_code]
         c = x[:, self.output_dim + self.len_continuous_code:]
         return a, b, c

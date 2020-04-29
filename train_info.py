@@ -170,7 +170,7 @@ for i in range(epoch):
 		samples = G(sample_z, sample_c, sample_d)
 		samples = (samples + 1) / 2
 		torchvision.utils.save_image(samples, save_dir+'/%d_Epoch—c_d.png' % epoch, nrow=10)
-		samples = G(sample_z2, sample_c2, sample_y2)
+		samples = G(sample_z2, sample_c2, sample_d2)
 		samples = (samples + 1) / 2
 		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_c.png' % epoch, nrow=10)
 
