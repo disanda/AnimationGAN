@@ -21,7 +21,7 @@ experiment_name = args.experiment_name
 gpu_mode = True
 #SUPERVISED = True
 SUPERVISED = False
-batch_size = 64
+batch_size = 128
 z_dim_num = 100
 c_d_num = 1
 c_c_num = 4
@@ -64,7 +64,7 @@ if not os.path.exists(save_dir):
 
 transform = torchvision.transforms.Compose([
         torchvision.transforms.CenterCrop(160),
-        torchvision.transforms.Scale(64),
+        torchvision.transforms.Resize(64),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
