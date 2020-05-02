@@ -114,8 +114,8 @@ if gpu_mode == True:
 
 #------------------------model setting-----------------
 
-G = model.generator_info(z_dim=z_dim_num, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
-D = model.discriminator_info(input_dim=1, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
+G = model.generator_info(z_dim=z_dim_num, output_channel=3, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
+D = model.discriminator_info(input_channel=3, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
 G_optimizer = optim.Adam(G.parameters(), lr=0.0002, betas=(0.5, 0.999))
 D_optimizer = optim.Adam(D.parameters(), lr=0.0002, betas=(0.5, 0.999))
 info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()), lr=0.0002, betas=(0.5, 0.9))#G,D都更新
