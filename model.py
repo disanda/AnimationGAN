@@ -394,7 +394,7 @@ class generator_info(nn.Module):
     def __init__(self, z_dim=100, output_channel=1, input_size=32, len_discrete_code=10, len_continuous_code=2):
         super().__init__()
         self.z_dim = z_dim
-        self.output_dim = output_dim
+        self.output_dim = output_channel
         self.input_size = input_size
         self.len_discrete_code = len_discrete_code  # categorical distribution (i.e. label)
         self.len_continuous_code = len_continuous_code  # gaussian distribution (e.g. rotation, thickness)
