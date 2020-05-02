@@ -103,7 +103,7 @@ def loss_plot(hist, path = 'Train_hist.png', model_name = ''):
     plt.close()
 
 #---------------------------moving-Mnist---------------------
-class MovingMNIST(data.Dataset):
+class MovingMNIST(torch.utils.data.Dataset):
     """`MovingMNIST <http://www.cs.toronto.edu/~nitish/unsupervised_video/>`_ Dataset.
     Args:root 数据存放路径/ train 是训练集还是数据集 / split 测试集数量 /dataload 是否加载下载数据(第一次) /transform /target_transform 数据格式转换 
     """
