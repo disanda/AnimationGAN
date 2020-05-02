@@ -63,10 +63,10 @@ if not os.path.exists(save_dir):
 # )
 
 transform = torchvision.transforms.Compose([
-        transforms.CenterCrop(160),
-        transform.Scale(64),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
+        torchvision.transforms.CenterCrop(160),
+        torchvision.transform.Scale(64),
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
 data_dir = '../_yucheng/dataSet/img_align_celeba/'  # this path depends on your computer
 train_loader =  utils.load_celebA(data_dir, transform, batch_size, shuffle=True)
