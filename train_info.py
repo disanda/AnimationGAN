@@ -9,6 +9,7 @@ import model
 import argparse
 from PIL import Image
 import time
+import utils
 
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
@@ -18,10 +19,11 @@ args = parser.parse_args()
 
 experiment_name = args.experiment_name
 gpu_mode = True
-SUPERVISED = True
+#SUPERVISED = True
+SUPERVISED = False
 batch_size = 64
 z_dim_num = 100
-c_d_num = 10
+c_d_num = 1
 c_c_num = 4
 input_dim = 112 # z =100 ,c_d =10 c_c = 2
 input_size = 64
@@ -40,24 +42,34 @@ if not os.path.exists(save_dir):
     os.mkdir(save_dir)
 
 #--------------------------data-----------------------
-transform = torchvision.transforms.Compose(
-    [torchvision.transforms.Resize(size=(input_size, input_size), interpolation=Image.BICUBIC),
-     torchvision.transforms.ToTensor(),#Img2Tensor
-     torchvision.transforms.Normalize(mean=[0.5], std=[0.5])# 取值范围(0,1)->(-1,1)
-     #torchvision.transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)), #单通道改三通道
-     #torchvision.transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)
-     ]
-)
-train_loader = torch.utils.data.DataLoader(
-    #dataset=torchvision.datasets.FashionMNIST('./data/', train=True, download=True, transform=transform),
-    #dataset=torchvision.datasets.CIFAR10('./data', train=True, download=True, transform=transform),
-    dataset=torchvision.datasets.MNIST('./data/', train=True, download=True, transform=transform),
-    batch_size=batch_size,
-    shuffle=True,
-    num_workers=4,
-    pin_memory=gpu_mode,
-    drop_last=True
-)
+# transform = torchvision.transforms.Compose(
+#     [torchvision.transforms.Resize(size=(input_size, input_size), interpolation=Image.BICUBIC),
+#      torchvision.transforms.ToTensor(),#Img2Tensor
+#      #torchvision.transforms.Normalize(mean=[0.5], std=[0.5])# 取值范围(0,1)->(-1,1)
+#      #torchvision.transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)), #单通道改三通道
+#      #torchvision.transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)
+
+#      ]
+# )
+# train_loader = torch.utils.data.DataLoader(
+#     #dataset=torchvision.datasets.FashionMNIST('./data/', train=True, download=True, transform=transform),
+#     #dataset=torchvision.datasets.CIFAR10('./data', train=True, download=True, transform=transform),
+#     dataset=torchvision.datasets.MNIST('./data/', train=True, download=True, transform=transform),
+#     batch_size=batch_size,
+#     shuffle=True,
+#     num_workers=4,
+#     pin_memory=gpu_mode,
+#     drop_last=True
+# )
+
+transform = transforms.Compose([
+        transforms.CenterCrop(160),
+        transform.Scale(64)
+        transforms.ToTensor(),
+        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
+    ])
+data_dir = '/_yucheng/dataSet/img_align_celeba/'  # this path depends on your computer
+train_loader =  utils.load_celebA(data_dir, transform, batch_size, shuffle=True)
 
 # fixed noise & condition
 sample_z = torch.zeros((sample_num, z_dim_num))
@@ -107,7 +119,7 @@ D = model.discriminator_info(input_dim=1, output_dim=1, input_size=input_size, l
 G_optimizer = optim.Adam(G.parameters(), lr=0.0002, betas=(0.5, 0.999))
 D_optimizer = optim.Adam(D.parameters(), lr=0.0002, betas=(0.5, 0.999))
 info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()), lr=0.0002, betas=(0.5, 0.9))#G,D都更新
-d_real_flag, d_fake_flag = torch.ones(batch_size, 1), torch.zeros(batch_size, 1)
+d_real_flag, d_fake_flag = torch.ones(batch_size), torch.zeros(batch_size)
 if gpu_mode == True:
     d_real_flag, d_fake_flag = d_real_flag.cuda(), d_fake_flag.cuda()
 

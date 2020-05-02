@@ -402,7 +402,7 @@ class generator_info(nn.Module):
             nn.Linear(self.z_dim + self.len_discrete_code + self.len_continuous_code, 1024),
             nn.BatchNorm1d(1024),
             nn.ReLU(),
-            nn.Linear(1024, 128 * (self.input_size // 4) * (self.input_size // 4)),#[1024,128*8*8]
+            nn.Linear(1024, 128 * (self.input_size // 4) * (self.input_size // 4)),#[1024,128*8*8]-input_size=32
             nn.BatchNorm1d(128 * (self.input_size // 4) * (self.input_size // 4)),
             nn.ReLU(),
         )
@@ -433,9 +433,10 @@ class discriminator_info(nn.Module):
         self.len_discrete_code = len_discrete_code  # categorical distribution (i.e. label)
         self.len_continuous_code = len_continuous_code  # gaussian distribution (e.g. rotation, thickness)
         self.conv = nn.Sequential(
-            nn.Conv2d(self.input_dim, 64, 4, 2, 1),
+            nn.Conv2d(self.input_dim, 64, 4, 2, 1),#input_size/2
             nn.LeakyReLU(0.2),
-            nn.Conv2d(64, 128, 4, 2, 1),
+            nn.Conv2d(64, 128, 4, 2, 1),#input_size/4
+            nn.LeakyReLU(0.2),
             nn.BatchNorm2d(128),
             nn.LeakyReLU(0.2),
         )
