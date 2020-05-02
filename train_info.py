@@ -21,7 +21,7 @@ experiment_name = args.experiment_name
 gpu_mode = True
 #SUPERVISED = True
 SUPERVISED = False
-batch_size = 128
+batch_size = 100
 z_dim_num = 100
 c_d_num = 10
 c_c_num = 4
@@ -69,7 +69,7 @@ transform = torchvision.transforms.Compose([
         torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
 data_dir = '/_yucheng/dataSet/celeba/'  # this path depends on your computer
-train_loader =  utils.load_celebA(data_dir, transform, batch_size, shuffle=True)
+train_loader =  utils.load_celebA(data_dir, transform, batch_size, shuffle=True,drop_last=True)
 
 # fixed noise & condition
 sample_z = torch.zeros((sample_num, z_dim_num))
