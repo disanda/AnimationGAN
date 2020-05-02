@@ -64,7 +64,7 @@ if not os.path.exists(save_dir):
 
 transform = torchvision.transforms.Compose([
         torchvision.transforms.CenterCrop(160),
-        torchvision.transform.Scale(64),
+        torchvision.transforms.Scale(64),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
