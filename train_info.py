@@ -13,7 +13,7 @@ import utils
 
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='InfoGAN_MNIST_v2_Supv_4c')
+parser.add_argument('--name', dest='experiment_name', default='celeba')
 args = parser.parse_args()
 
 
