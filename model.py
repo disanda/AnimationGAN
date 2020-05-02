@@ -427,7 +427,7 @@ class discriminator_info(nn.Module):
     # 输入是图片，输出是按照参数分为 [-1, output_dim] , [-1, len_continuous_code] , [-1 , len_continuous_code]
     def __init__(self, input_channel=1, output_dim=1, input_size=32, len_discrete_code=10, len_continuous_code=2):
         super().__init__()
-        self.input_dim = input_dim
+        self.input_dim = input_channel
         self.output_dim = output_dim
         self.input_size = input_size
         self.len_discrete_code = len_discrete_code  # categorical distribution (i.e. label)
