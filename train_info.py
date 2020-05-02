@@ -62,7 +62,7 @@ if not os.path.exists(save_dir):
 #     drop_last=True
 # )
 
-transform = transforms.Compose([
+transform = torchvision.transforms.Compose([
         transforms.CenterCrop(160),
         transform.Scale(64),
         transforms.ToTensor(),
