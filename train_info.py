@@ -64,7 +64,7 @@ if not os.path.exists(save_dir):
 
 transform = transforms.Compose([
         transforms.CenterCrop(160),
-        transform.Scale(64)
+        transform.Scale(64),
         transforms.ToTensor(),
         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
