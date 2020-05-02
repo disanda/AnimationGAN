@@ -23,7 +23,7 @@ gpu_mode = True
 SUPERVISED = False
 batch_size = 128
 z_dim_num = 100
-c_d_num = 1
+c_d_num = 10
 c_c_num = 4
 input_dim = 112 # z =100 ,c_d =10 c_c = 2
 input_size = 64
@@ -73,11 +73,11 @@ train_loader =  utils.load_celebA(data_dir, transform, batch_size, shuffle=True)
 
 # fixed noise & condition
 sample_z = torch.zeros((sample_num, z_dim_num))
+temp = torch.zeros((c_d_num, 1))
 for i in range(c_d_num):
 	sample_z[i * c_d_num] = torch.rand(1, z_dim_num)#10
 	for j in range(1, c_d_num):
 		sample_z[i * c_d_num + j] = sample_z[i * c_d_num]#每10个的noize都相同
-		temp = torch.zeros((c_d_num, 1))
 for i in range(c_d_num):
 	temp[i, 0] = i #每一个标签
 	temp_d = torch.zeros((sample_num, 1))
