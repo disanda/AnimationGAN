@@ -52,7 +52,7 @@ def load_celebA(dir, transform, batch_size, shuffle):
     # ])
     # data_dir = 'data/celebA'  # this path depends on your computer
     dset = datasets.ImageFolder(dir, transform)
-    data_loader = torch.utils.data.DataLoader(dset, batch_size, shuffle)
+    data_loader = torch.utils.data.DataLoader(dset, batch_size, shuffle, drop_last=True)
     return data_loader
 
 #-----------------------network-----------------------
