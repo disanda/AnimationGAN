@@ -13,7 +13,7 @@ import utils
 
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='celeba')
+parser.add_argument('--name', dest='experiment_name', default='3dface')
 args = parser.parse_args()
 
 
@@ -62,14 +62,29 @@ if not os.path.exists(save_dir):
 #     drop_last=True
 # )
 
+#celeba
+# transform = torchvision.transforms.Compose([
+#         torchvision.transforms.CenterCrop(160),
+#         torchvision.transforms.Resize(64),
+#         torchvision.transforms.ToTensor(),
+#         torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
+#     ])
+# data_dir = '/_yucheng/dataSet/celeba/'  # this path depends on your computer
+# train_loader =  utils.load_celebA(data_dir, transform, batch_size, shuffle=True)
+
+#face_3d
 transform = torchvision.transforms.Compose([
-        torchvision.transforms.CenterCrop(160),
-        torchvision.transforms.Resize(64),
+        #torchvision.transforms.CenterCrop(160),
+        torchvision.transforms.Resize((64,64)),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
-data_dir = '/_yucheng/dataSet/celeba/'  # this path depends on your computer
-train_loader =  utils.load_celebA(data_dir, transform, batch_size, shuffle=True)
+path = '/_yucheng/dataSet/face3D'
+face3d_dataset = datasets.ImageFolder(path, transform=transform_face)
+data_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=100, shuffle=True,drop_last=True)
+
+
+
 
 # fixed noise & condition
 sample_z = torch.zeros((sample_num, z_dim_num))
