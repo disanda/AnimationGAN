@@ -80,7 +80,7 @@ transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
-path = '/_yucheng/dataSet/face3d//faces3d'
+path = '/_yucheng/dataSet/face3d//face3d'
 face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
 train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=64, shuffle=True,drop_last=True)
 
