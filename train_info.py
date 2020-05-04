@@ -11,10 +11,10 @@ from PIL import Image
 import time
 import utils
 import tqdm
-
+import random
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='3dface')
+parser.add_argument('--name', dest='experiment_name', default='3dface_c_d_20')
 args = parser.parse_args()
 
 
@@ -22,21 +22,23 @@ experiment_name = args.experiment_name
 gpu_mode = True
 #SUPERVISED = True
 SUPERVISED = False
-batch_size = 100
+batch_size = 64
 z_dim_num = 100
-c_d_num = 10
+c_d_num = 20
 c_c_num = 4
-input_dim = 112 # z =100 ,c_d =10 c_c = 2
+#input_dim: z =100 ,c_d =10 c_c = 2
 input_size = 64
-sample_num =100
+sample_num =200
 epoch = 60
 
 
 if not os.path.exists('./info_output/'):
     os.mkdir('./info_output/')
 
+save_root='./info_output/%s/'
 if not os.path.exists('./info_output/%s/'% experiment_name):
     os.mkdir('./info_output/%s/'% experiment_name)
+
 
 save_dir = './info_output/%s/sample_training/' % experiment_name
 if not os.path.exists(save_dir):
@@ -91,42 +93,35 @@ train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size
 sample_z = torch.zeros((sample_num, z_dim_num))
 temp = torch.zeros((c_d_num, 1))
 for i in range(c_d_num):
-	sample_z[i * c_d_num] = torch.rand(1, z_dim_num)#10
-	for j in range(1, c_d_num):
-		sample_z[i * c_d_num + j] = sample_z[i * c_d_num]#每10个的noize都相同
+	sample_z[i * 10] = torch.rand(1, z_dim_num)#为0,10,20,30的样本赋值。类似1个类有十个样本
+	for j in range(1, 10):
+		sample_z[i * 10 + j] = sample_z[i * 10]#每10个的noize都相同
+
 for i in range(c_d_num):
 	temp[i, 0] = i #每一个标签
 	temp_d = torch.zeros((sample_num, 1))
 for i in range(c_d_num):
-		temp_d[i * c_d_num: (i + 1) * c_d_num] = temp #10个人的标签轮一遍
+	temp_d[i * 10: (i + 1) * 10] = temp[i] #10个人的标签一样
 sample_d = torch.zeros((sample_num, c_d_num)).scatter_(1, temp_d.type(torch.LongTensor), 1)
 sample_c = torch.zeros((sample_num, c_c_num))
-# manipulating two continuous code
-sample_z2 = torch.rand((1, z_dim_num)).expand(sample_num, z_dim_num) #[100,62],但是每个样本的noize相同
-sample_d2 = torch.zeros(sample_num, c_d_num)#[100,10]
-sample_d2[:, 0] = 1
 
-temp_c = torch.linspace(-1, 1, 10)#10个范围在-1->1的等差数列
-sample_c2 = torch.zeros((sample_num, 2))#[100,2]
-for i in range(c_d_num):
-	for j in range(c_d_num):
-		sample_c2[i*c_d_num+j, 0] = temp_c[i]
-		sample_c2[i*c_d_num+j, 1] = temp_c[j]
+# 观察单一变量，固定其他变量
+sample_z2 = torch.rand((1, z_dim_num)).expand(sample_num, z_dim_num) #每个样本的noize相同
+sample_d2 = torch.zeros(sample_num, c_d_num)#[200,20]
 
-#再来一对潜变量
-sample_c_temp = torch.zeros((sample_num, 2))#[100,2]
-sample_c2 = torch.cat([sample_c2,sample_c_temp],-1)
-sample_c3 = torch.zeros((sample_num, 2))#[100,2]
-for i in range(c_d_num):
-	for j in range(c_d_num):
-		sample_c3[i*c_d_num+j, 0] = temp_c[i]
-		sample_c3[i*c_d_num+j, 1] = temp_c[j]
-sample_c3 = torch.cat([sample_c_temp,sample_c3],-1)
+temp_c = torch.linspace(-1, 1, c_d_num)		#10个范围在-1->1的等差数列
+sample_c2 = torch.zeros((sample_num, c_c_num))#[200,4]
 
+for i in range(10):		#每20个noise,label相同,c不同
+	d_label = random.randint(0,c_d_num-1)
+	sample_d2[i*c_d_num:(i+1)*c_d_num, d_label] = 1
+	sample_c2[i*c_d_num:(i+1)*c_d_num,i%c_c_num] = temp_c
+
+#gpu
 if gpu_mode == True:
-	sample_z, sample_d, sample_c, sample_z2, sample_d2, sample_c2, sample_c3 = \
+	sample_z, sample_d, sample_c, sample_z2, sample_d2, sample_c2 = \
 	sample_z.cuda(), sample_d.cuda(), sample_c.cuda(), \
-	sample_z2.cuda(), sample_d2.cuda(), sample_c2.cuda(), sample_c3.cuda()
+	sample_z2.cuda(), sample_d2.cuda(), sample_c2.cuda()
 
 #------------------------model setting-----------------
 
@@ -136,6 +131,15 @@ G_optimizer = optim.Adam(G.parameters(), lr=0.0002, betas=(0.5, 0.999))
 D_optimizer = optim.Adam(D.parameters(), lr=0.0002, betas=(0.5, 0.999))
 info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()), lr=0.0002, betas=(0.5, 0.9))#G,D都更新
 d_real_flag, d_fake_flag = torch.ones(batch_size), torch.zeros(batch_size)
+
+with open(save_root+'setting.txt', 'a') as f:
+	print('----',file=f)
+	print(G,file=f)
+	print('----',file=f)
+	print(D,file=f)
+	print('----',file=f)
+
+
 if gpu_mode == True:
     d_real_flag, d_fake_flag = d_real_flag.cuda(), d_fake_flag.cuda()
 
@@ -159,6 +163,8 @@ train_hist['total_time'] = []
 
 
 #------------------train----------------------
+if not os.path.exists(ckpt_dir):
+	os.mkdir(ckpt_dir)
 D.train()
 print('training start!!')
 start_time = time.time()
@@ -202,9 +208,12 @@ for i in tqdm.trange(epoch):
 		train_hist['info_loss'].append(info_loss.item())
 		info_loss.backward()
 		info_optimizer.step()
-		if ((j + 1) % 100) == 0:
-			print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f, info_loss: %.8f" %((i + 1), (j + 1), train_loader.dataset.__len__() // batch_size, D_loss.item(), G_loss.item(), info_loss.item()))
 		train_hist['per_epoch_time'].append(time.time() - epoch_start_time)
+		if ((j + 1) % 100) == 0:
+			with open(save_root+'setting.txt', 'a') as f:
+				print('----',file=f)
+				print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f, info_loss: %.8f" %((i + 1), (j + 1), train_loader.dataset.__len__() // batch_size, D_loss.item(), G_loss.item(), info_loss.item()),file=f)
+				print('----',file=f)
 # save2img
 	with torch.no_grad():
 		G.eval()
@@ -215,15 +224,9 @@ for i in tqdm.trange(epoch):
 		samples = G(sample_z2, sample_c2, sample_d2)
 		samples = (samples + 1) / 2
 		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_c.png' % i, nrow=10)
-		samples = G(sample_z2, sample_c3, sample_d2)
-		samples = (samples + 1) / 2
-		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_c2.png' % i, nrow=10)
-
 # others
-ckpt_dir = './info_output/%s/checkpoints' % experiment_name
-if not os.path.exists(ckpt_dir):
-    os.mkdir(ckpt_dir)
-torch.save({'epoch': epoch + 1,'G': G.state_dict()},'%s/Epoch_(%d).ckpt' % (ckpt_dir, epoch + 1))
+	ckpt_dir = './info_output/%s/checkpoints' % experiment_name
+		torch.save({'epoch': epoch + 1,'G': G.state_dict()},'%s/Epoch_(%d).ckpt' % (ckpt_dir, epoch + 1))
 
 
 		# print('-------------')
