@@ -201,7 +201,7 @@ for i in tqdm.trange(epoch):
 		D_fake, _, _ = D(y_f)
 		#D_fake_loss = BCE_loss(D_fake, d_fake_flag)
 		D_real_loss, D_fake_loss = d_loss_fn(D_real, D_fake)
-		gp = loss_norm_gp.gradient_penalty(D, x, x_f, mode=gp_mode)
+		gp = loss_norm_gp.gradient_penalty(D, y, y_f, mode=gp_mode)
 		D_loss = D_real_loss + D_fake_loss + gp
 		train_hist['D_loss'].append(D_loss.item())
 		D_loss.backward(retain_graph=True)
