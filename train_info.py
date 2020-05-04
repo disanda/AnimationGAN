@@ -14,7 +14,7 @@ import tqdm
 import random
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='mnist_cd10_cc4')
+parser.add_argument('--name', dest='experiment_name', default='mnist_cd5_cc5')
 args = parser.parse_args()
 
 
@@ -24,8 +24,8 @@ gpu_mode = True
 SUPERVISED = False
 batch_size = 64
 z_dim_num = 100
-c_d_num = 20
-c_c_num = 4
+c_d_num = 5
+c_c_num = 5
 #input_dim: z =100 ,c_d =10 c_c = 2
 input_size = 64
 img_channel = 1
@@ -95,7 +95,7 @@ train_loader = torch.utils.data.DataLoader(
 
 
 
-# fixed noise & condition
+# 固定noise和cc，cd每10个变一次
 sample_z = torch.zeros((sample_num, z_dim_num))
 temp = torch.zeros((c_d_num, 1))
 for i in range(c_d_num):
