@@ -14,7 +14,7 @@ import tqdm
 import random
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='3dface_c_d_20')
+parser.add_argument('--name', dest='experiment_name', default='mnist_cd10_cc4')
 args = parser.parse_args()
 
 
@@ -28,6 +28,7 @@ c_d_num = 20
 c_c_num = 4
 #input_dim: z =100 ,c_d =10 c_c = 2
 input_size = 64
+img_channel = 1
 sample_num =200
 epoch = 60
 
@@ -50,25 +51,25 @@ if not os.path.exists(ckpt_dir):
 
 
 #--------------------------data-----------------------
-# transform = torchvision.transforms.Compose(
-#     [torchvision.transforms.Resize(size=(input_size, input_size), interpolation=Image.BICUBIC),
-#      torchvision.transforms.ToTensor(),#Img2Tensor
-#      #torchvision.transforms.Normalize(mean=[0.5], std=[0.5])# 取值范围(0,1)->(-1,1)
-#      #torchvision.transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)), #单通道改三通道
-#      #torchvision.transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)
+transform = torchvision.transforms.Compose(
+    [torchvision.transforms.Resize(size=(input_size, input_size), interpolation=Image.BICUBIC),
+     torchvision.transforms.ToTensor(),#Img2Tensor
+     torchvision.transforms.Normalize(mean=[0.5], std=[0.5])# 取值范围(0,1)->(-1,1)
+     #torchvision.transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)), #单通道改三通道
+     #torchvision.transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)
 
-#      ]
-# )
-# train_loader = torch.utils.data.DataLoader(
-#     #dataset=torchvision.datasets.FashionMNIST('./data/', train=True, download=True, transform=transform),
-#     #dataset=torchvision.datasets.CIFAR10('./data', train=True, download=True, transform=transform),
-#     dataset=torchvision.datasets.MNIST('./data/', train=True, download=True, transform=transform),
-#     batch_size=batch_size,
-#     shuffle=True,
-#     num_workers=4,
-#     pin_memory=gpu_mode,
-#     drop_last=True
-# )
+     ]
+)
+train_loader = torch.utils.data.DataLoader(
+    #dataset=torchvision.datasets.FashionMNIST('./data/', train=True, download=True, transform=transform),
+    #dataset=torchvision.datasets.CIFAR10('./data', train=True, download=True, transform=transform),
+    dataset=torchvision.datasets.MNIST('./data/', train=True, download=True, transform=transform),
+    batch_size=batch_size,
+    shuffle=True,
+    num_workers=4,
+    pin_memory=gpu_mode,
+    drop_last=True
+)
 
 #celeba
 # transform = torchvision.transforms.Compose([
@@ -81,15 +82,15 @@ if not os.path.exists(ckpt_dir):
 # train_loader =  utils.load_celebA(data_dir, transform, batch_size, shuffle=True)
 
 #face_3d
-transform = torchvision.transforms.Compose([
-        #torchvision.transforms.CenterCrop(160),
-        torchvision.transforms.Resize((64,64)),
-        torchvision.transforms.ToTensor(),
-        torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
-    ])
-path = '/_yucheng/dataSet/face3d//face3d'
-face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
-train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
+# transform = torchvision.transforms.Compose([
+#         #torchvision.transforms.CenterCrop(160),
+#         torchvision.transforms.Resize((64,64)),
+#         torchvision.transforms.ToTensor(),
+#         torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
+#     ])
+# path = '/_yucheng/dataSet/face3d//face3d'
+# face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
+# train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
 
 
 
@@ -106,7 +107,7 @@ for i in range(c_d_num):
 	temp[i, 0] = i #每一个标签
 	temp_d = torch.zeros((sample_num, 1))
 for i in range(c_d_num):
-	temp_d[i * 10: (i + 1) * 10] = temp[i] #10个人的标签一样
+	temp_d[i * 10: (i + 1) * 10] = temp[i] #每10个人的一样
 sample_d = torch.zeros((sample_num, c_d_num)).scatter_(1, temp_d.type(torch.LongTensor), 1)
 sample_c = torch.zeros((sample_num, c_c_num))
 
@@ -114,10 +115,10 @@ sample_c = torch.zeros((sample_num, c_c_num))
 sample_z2 = torch.rand((1, z_dim_num)).expand(sample_num, z_dim_num) #每个样本的noize相同
 sample_d2 = torch.zeros(sample_num, c_d_num)#[200,20]
 
-temp_c = torch.linspace(-1, 1, c_d_num)		#10个范围在-1->1的等差数列
+temp_c = torch.linspace(-1, 1, c_d_num)		#c_d_num个范围在-1->1的等差数列
 sample_c2 = torch.zeros((sample_num, c_c_num))#[200,4]
 
-for i in range(10):		#每20个noise,label相同,c不同
+for i in range(10):		#每20个noise,c_d相同,c_c不同
 	d_label = random.randint(0,c_d_num-1)
 	sample_d2[i*c_d_num:(i+1)*c_d_num, d_label] = 1
 	sample_c2[i*c_d_num:(i+1)*c_d_num,i%c_c_num] = temp_c
@@ -130,8 +131,8 @@ if gpu_mode == True:
 
 #------------------------model setting-----------------
 
-G = model.generator_info(z_dim=z_dim_num, output_channel=3, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
-D = model.discriminator_info(input_channel=3, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
+G = model.generator_info(z_dim=z_dim_num, output_channel=img_channel, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
+D = model.discriminator_info(input_channel=img_channel, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
 G_optimizer = optim.Adam(G.parameters(), lr=0.0002, betas=(0.5, 0.999))
 D_optimizer = optim.Adam(D.parameters(), lr=0.0002, betas=(0.5, 0.999))
 info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()), lr=0.0002, betas=(0.5, 0.9))#G,D都更新
