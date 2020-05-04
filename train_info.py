@@ -10,6 +10,7 @@ import argparse
 from PIL import Image
 import time
 import utils
+import tqdm
 
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
@@ -79,9 +80,9 @@ transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
-path = '/_yucheng/dataSet/face3D/face3D'
+path = '/_yucheng/dataSet/face3d//faces3d'
 face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
-train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=100, shuffle=True,drop_last=True)
+train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=64, shuffle=True,drop_last=True)
 
 
 
@@ -161,10 +162,10 @@ train_hist['total_time'] = []
 D.train()
 print('training start!!')
 start_time = time.time()
-for i in range(epoch):
+for i in tqdm.trange(epoch):
 	G.train()
 	epoch_start_time = time.time()
-	for j, (y, c_d_true) in enumerate(train_loader):
+	for j, (y, c_d_true) in tqdm.tqdm(train_loader):
 		z = torch.rand((batch_size, z_dim_num))
 		if SUPERVISED == True:
 			c_d = torch.zeros((batch_size, c_d_num)).scatter_(1, c_d_true.type(torch.LongTensor).unsqueeze(1), 1)
