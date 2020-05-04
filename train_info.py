@@ -12,9 +12,11 @@ import time
 import utils
 import tqdm
 import random
+import loss_norm_gp
+
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='mnist_cd20_cc10')
+parser.add_argument('--name', dest='experiment_name', default='mnist_cd20_cc10_wgan-gp')
 args = parser.parse_args()
 
 
@@ -31,6 +33,7 @@ input_size = 64
 img_channel = 1
 sample_num =400
 epoch = 60
+gp_mode = 'wgan-gp'
 
 
 if not os.path.exists('./info_output/'):
@@ -119,7 +122,8 @@ temp_c = torch.linspace(-1, 1, c_d_num)		#c_d_num个范围在-1->1的等差数�
 sample_c2 = torch.zeros((sample_num, c_c_num))#[200,c_c]
 
 for i in range(sample_num//c_d_num):		#每c_d个noise,c_d相同,c_c不同
-	d_label = random.randint(0,c_d_num-1)
+	#d_label = random.randint(0,c_d_num-1)
+	d_label = i%c_d_num
 	sample_d2[i*c_d_num:(i+1)*c_d_num, d_label] = 1
 	sample_c2[i*c_d_num:(i+1)*c_d_num,i%c_c_num] = temp_c
 
@@ -160,6 +164,9 @@ else:
 	CE_loss = nn.CrossEntropyLoss()
 	MSE_loss = nn.MSELoss()
 
+d_loss_fn, g_loss_fn = loss_norm_gp.get_losses_fn('wgan')
+
+
 train_hist = {}
 train_hist['D_loss'] = []
 train_hist['G_loss'] = []
@@ -189,11 +196,13 @@ for i in tqdm.trange(epoch):
 # update D network
 		D_optimizer.zero_grad()
 		D_real, _, _ = D(y)
-		D_real_loss = BCE_loss(D_real, d_real_flag)
+		#D_real_loss = BCE_loss(D_real, d_real_flag)
 		y_f = G(z, c_c, c_d)
 		D_fake, _, _ = D(y_f)
-		D_fake_loss = BCE_loss(D_fake, d_fake_flag)
-		D_loss = D_real_loss + D_fake_loss
+		#D_fake_loss = BCE_loss(D_fake, d_fake_flag)
+		D_real_loss, D_fake_loss = d_loss_fn(D_real, D_fake)
+		gp = loss_norm_gp.gradient_penalty(D, x, x_f, mode=gp_mode)
+		D_loss = D_real_loss + D_fake_loss + gp
 		train_hist['D_loss'].append(D_loss.item())
 		D_loss.backward(retain_graph=True)
 		D_optimizer.step()
@@ -201,7 +210,8 @@ for i in tqdm.trange(epoch):
 		G_optimizer.zero_grad()
 		y_f = G(z, c_c, c_d)
 		D_fake, D_cont, D_disc = D(y_f)
-		G_loss = BCE_loss(D_fake, d_real_flag)
+		#G_loss = BCE_loss(D_fake, d_real_flag)
+		G_loss = g_loss_fn(D_fake)
 		train_hist['G_loss'].append(G_loss.item())
 		G_loss.backward(retain_graph=True)
 		G_optimizer.step()

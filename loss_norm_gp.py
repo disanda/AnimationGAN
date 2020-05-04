@@ -17,6 +17,15 @@ def get_losses_fn(mode):
             f_loss = torch.nn.functional.binary_cross_entropy_with_logits(f_logit, torch.ones_like(f_logit))
             return f_loss
 
+    if model == 'gan_v2'
+        def d_loss_fn(r_logit, f_logit):
+            r_loss = torch.nn.functional.binary_cross_entropy_with_logits(r_logit, torch.ones_like(r_logit))
+            f_loss = torch.nn.functional.binary_cross_entropy_with_logits(f_logit, torch.zeros_like(f_logit))
+            return r_loss, f_loss
+        def g_loss_fn(f_logit):
+            f_loss = torch.nn.functional.binary_cross_entropy_with_logits(f_logit, torch.ones_like(f_logit))
+            return f_loss
+
     elif mode == 'lsgan':
         def d_loss_fn(r_logit, f_logit):
             r_loss = torch.nn.functional.mse_loss(r_logit, torch.ones_like(r_logit))
