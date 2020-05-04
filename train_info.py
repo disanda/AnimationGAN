@@ -16,7 +16,7 @@ import loss_norm_gp
 
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='mnist_cd20_cc10_wgan-gp')
+parser.add_argument('--name', dest='experiment_name', default='mnist_cd5_cc5_wgan-gp')
 args = parser.parse_args()
 
 
@@ -26,8 +26,8 @@ gpu_mode = True
 SUPERVISED = False
 batch_size = 128
 z_dim_num = 100
-c_d_num = 20
-c_c_num = 10
+c_d_num = 5
+c_c_num = 5
 #input_dim: z =100 ,c_d =10 c_c = 2
 input_size = 64
 img_channel = 1
@@ -201,7 +201,7 @@ for i in tqdm.trange(epoch):
 		D_fake, _, _ = D(y_f)
 		#D_fake_loss = BCE_loss(D_fake, d_fake_flag)
 		D_real_loss, D_fake_loss = d_loss_fn(D_real, D_fake)
-		gp = loss_norm_gp.gradient_penalty(D, y, y_f, mode=gp_mode)
+		gp = loss_norm_gp.gradient_penalty(D, y.clone().detach().requires_grad_(Ture), y_f.clone().detach().requires_grad_(Ture), mode=gp_mode)
 		D_loss = D_real_loss + D_fake_loss + gp
 		train_hist['D_loss'].append(D_loss.item())
 		D_loss.backward(retain_graph=True)
