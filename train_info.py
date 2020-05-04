@@ -44,6 +44,11 @@ save_dir = './info_output/%s/sample_training/' % experiment_name
 if not os.path.exists(save_dir):
     os.mkdir(save_dir)
 
+ckpt_dir = './info_output/%s/checkpoints' % experiment_name
+if not os.path.exists(ckpt_dir):
+	os.mkdir(ckpt_dir)
+
+
 #--------------------------data-----------------------
 # transform = torchvision.transforms.Compose(
 #     [torchvision.transforms.Resize(size=(input_size, input_size), interpolation=Image.BICUBIC),
@@ -163,8 +168,6 @@ train_hist['total_time'] = []
 
 
 #------------------train----------------------
-if not os.path.exists(ckpt_dir):
-	os.mkdir(ckpt_dir)
 D.train()
 print('training start!!')
 start_time = time.time()
@@ -224,9 +227,7 @@ for i in tqdm.trange(epoch):
 		samples = G(sample_z2, sample_c2, sample_d2)
 		samples = (samples + 1) / 2
 		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_c.png' % i, nrow=10)
-# others
-	ckpt_dir = './info_output/%s/checkpoints' % experiment_name
-		torch.save({'epoch': epoch + 1,'G': G.state_dict()},'%s/Epoch_(%d).ckpt' % (ckpt_dir, epoch + 1))
+		torch.save({'epoch': epoch + 1,'G': G.state_dict()},'%s/Epoch_(%d).ckpt' % (ckpt_dir, epoch + 1))#save model
 
 
 		# print('-------------')
