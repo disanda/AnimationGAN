@@ -165,7 +165,9 @@ start_time = time.time()
 for i in tqdm.trange(epoch):
 	G.train()
 	epoch_start_time = time.time()
-	for j, (y, c_d_true) in tqdm.tqdm(train_loader):
+	j=0
+	for y, c_d_true in tqdm.tqdm(train_loader):
+		j = j + 1
 		z = torch.rand((batch_size, z_dim_num))
 		if SUPERVISED == True:
 			c_d = torch.zeros((batch_size, c_d_num)).scatter_(1, c_d_true.type(torch.LongTensor).unsqueeze(1), 1)
