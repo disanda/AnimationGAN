@@ -35,7 +35,7 @@ epoch = 60
 if not os.path.exists('./info_output/'):
     os.mkdir('./info_output/')
 
-save_root='./info_output/%s/'
+save_root='./info_output/%s/'%experiment_name
 if not os.path.exists('./info_output/%s/'% experiment_name):
     os.mkdir('./info_output/%s/'% experiment_name)
 
