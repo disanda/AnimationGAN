@@ -179,6 +179,10 @@ for i in tqdm.trange(epoch):
 # update D network
 		D_optimizer.zero_grad()
 		D_real, _, _ = D(y)
+		print('-------------')
+		print(D_real.shape)
+		print(d_real_flag.shape)
+		print('--------------')
 		D_real_loss = BCE_loss(D_real, d_real_flag)
 		y_f = G(z, c_c, c_d)
 		D_fake, _, _ = D(y_f)
