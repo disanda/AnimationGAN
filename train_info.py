@@ -82,7 +82,7 @@ transform = torchvision.transforms.Compose([
     ])
 path = '/_yucheng/dataSet/face3d//face3d'
 face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
-train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=64, shuffle=True,drop_last=True)
+train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
 
 
 
