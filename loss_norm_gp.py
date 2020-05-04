@@ -79,7 +79,8 @@ def gradient_penalty(f, real, fake, mode):
             alpha = torch.rand(shape).to(device)
             inter = a + alpha * (b - a)
             return inter
-        x = torch.tensor(_interpolate(real, fake), requires_grad=True)
+        #x = torch.tensor(_interpolate(real, fake), requires_grad=True)
+        x = _interpolate(real, fake).clone().detach().requires_grad_(True)
         pred = f(x)
         if isinstance(pred, tuple):#查看pred是否是元组
             pred = pred[0]
