@@ -14,7 +14,7 @@ import tqdm
 import random
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='mnist_cd1_cc2')
+parser.add_argument('--name', dest='experiment_name', default='mnist_cd20_cc10')
 args = parser.parse_args()
 
 
@@ -113,10 +113,10 @@ sample_c = torch.zeros((sample_num, c_c_num))
 
 # 观察单一变量，固定其他变量
 sample_z2 = torch.rand((1, z_dim_num)).expand(sample_num, z_dim_num) #每个样本的noize相同
-sample_d2 = torch.zeros(sample_num, c_d_num)#[200,20]
+sample_d2 = torch.zeros(sample_num, c_d_num)#[200,c_d]
 
 temp_c = torch.linspace(-1, 1, c_d_num)		#c_d_num个范围在-1->1的等差数列
-sample_c2 = torch.zeros((sample_num, c_c_num))#[200,4]
+sample_c2 = torch.zeros((sample_num, c_c_num))#[200,c_c]
 
 for i in range(10):		#每20个noise,c_d相同,c_c不同
 	d_label = random.randint(0,c_d_num-1)
