@@ -13,7 +13,7 @@ import utils
 import tqdm
 import random
 import loss_norm_gp
-
+import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
 parser.add_argument('--name', dest='experiment_name', default='mnist+_cd10_cc10')
