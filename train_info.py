@@ -16,25 +16,25 @@ import loss_norm_gp
 
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='mnist_cd5_cc5_wgan-gp')
+parser.add_argument('--name', dest='experiment_name', default='mnist+_cd10_cc10')
 args = parser.parse_args()
 
 
-experiment_name = args.experiment_name
+
 gpu_mode = True
 #SUPERVISED = True
 SUPERVISED = False
 batch_size = 128
 z_dim_num = 100
-c_d_num = 5
-c_c_num = 5
+c_d_num = 10
+c_c_num = 10
 #input_dim: z =100 ,c_d =10 c_c = 2
 input_size = 64
 img_channel = 1
 sample_num =400
 epoch = 60
-gp_mode = 'wgan-gp'
-
+gp_mode = 'hingev2'
+experiment_name = args.experiment_name+gp_mode
 
 if not os.path.exists('./info_output/'):
     os.mkdir('./info_output/')
@@ -94,9 +94,6 @@ train_loader = torch.utils.data.DataLoader(
 # path = '/_yucheng/dataSet/face3d//face3d'
 # face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
 # train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
-
-
-
 
 # 固定noise和cc，每c_d个变一次c_d
 sample_z = torch.zeros((sample_num, z_dim_num))
@@ -201,7 +198,8 @@ for i in tqdm.trange(epoch):
 		D_fake, _, _ = D(y_f)
 		#D_fake_loss = BCE_loss(D_fake, d_fake_flag)
 		D_real_loss, D_fake_loss = d_loss_fn(D_real, D_fake)
-		gp = loss_norm_gp.gradient_penalty(D, y, y_f, mode=gp_mode)
+		#gp = loss_norm_gp.gradient_penalty(D, y, y_f, mode=gp_mode)
+		gp = loss_norm_gp.gradient_penalty(functools.partial(D), x_real, x_fake, gp_mode='0-gp', sample_mode='line')
 		D_loss = D_real_loss + D_fake_loss + gp
 		train_hist['D_loss'].append(D_loss.item())
 		D_loss.backward(retain_graph=True)

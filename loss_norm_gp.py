@@ -69,7 +69,6 @@ def m_loss(a,b1,b2):
 #f是判别函数:D
 def gradient_penalty(f, real, fake, mode):
     device = real.device
-
     def _gradient_penalty(f, real, fake=None):
         def _interpolate(a, b=None):
             if b is None:   # interpolation in DRAGAN
@@ -95,6 +94,69 @@ def gradient_penalty(f, real, fake, mode):
         gp = torch.tensor(0.0).to(device)
     else:
         raise NotImplementedError
+    return gp
+
+# =sample method=
+
+def _sample_line(real, fake):
+    shape = [real.size(0)] + [1] * (real.dim() - 1)#real.size(0),real第一维的个数/[1]*3 = [1,1,1] / real.dim()：real坐标数 如[1,1,1,1] dim为4
+    alpha = torch.rand(shape, device=real.device)
+    sample = real + alpha * (fake - real)
+    return sample
+
+
+def _sample_DRAGAN(real, fake):  # fake is useless
+    beta = torch.rand_like(real)#维度和real一样的随机矩阵,值为(0,1)
+    fake = real + 0.5 * real.std() * beta #fake只和real有关
+    sample = _sample_line(real, fake)
+    return sample
+
+
+# =gradient penalty method=
+
+def _norm(x):
+    norm = x.view(x.size(0), -1).norm(p=2, dim=1)
+    return norm
+
+
+def _one_mean_gp(grad):
+    norm = _norm(grad)
+    gp = ((norm - 1)**2).mean()
+    return gp
+
+
+def _zero_mean_gp(grad):
+    norm = _norm(grad)
+    gp = (norm**2).mean()
+    return gp
+
+
+def _lipschitz_penalty(grad):
+    norm = _norm(grad)
+    gp = (torch.max(torch.zeros_like(norm), norm - 1)**2).mean()
+    return gp
+
+
+def gradient_penalty(f, real, fake, gp_mode, sample_mode):
+    sample_fns = {
+        'line': _sample_line,
+        'real': lambda real, fake: real,
+        'fake': lambda real, fake: fake,
+        'dragan': _sample_DRAGAN,
+    }
+    gp_fns = {
+        '1-gp': _one_mean_gp,
+        '0-gp': _zero_mean_gp,
+        'lp': _lipschitz_penalty,
+    }
+    if gp_mode == 'none':
+        gp = torch.tensor(0, dtype=real.dtype, device=real.device)
+    else:
+        x = sample_fns[sample_mode](real, fake).detach()
+        x.requires_grad = True
+        pred = f(x)
+        grad = torch.autograd.grad(pred, x, grad_outputs=torch.ones_like(pred), create_graph=True)[0]
+        gp = gp_fns[gp_mode](grad)
     return gp
 
 #                                     utils                                   
