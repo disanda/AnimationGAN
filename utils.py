@@ -107,7 +107,7 @@ class MovingMNIST(torch.utils.data.Dataset):
     """`MovingMNIST <http://www.cs.toronto.edu/~nitish/unsupervised_video/>`_ Dataset.
     Args:root 数据存放路径/ train 是训练集还是数据集 / split 测试集数量 /dataload 是否加载下载数据(第一次) /transform /target_transform 数据格式转换 
     """
-    training_file = 'moving_mnist_train'
+    training_file = '/_yucheng/dataSet/moving_mnist/data/moving_mnist_train'
     test_file = 'moving_mnist_test'
     def __init__(self, root='./data', train=True, split=1000, transform=None, target_transform=None, dataload=False):
         self.root = os.path.expanduser(root)#创建路径root
@@ -116,31 +116,25 @@ class MovingMNIST(torch.utils.data.Dataset):
         self.split = split
         self.train = train  # training set or test set
 #第一次执行需要
-        if dataload:
+        if dataload == True:
             self.dataload()
-
         if self.train:
-            self.train_data = torch.load(os.path.join(self.root, self.training_file))#[9000,20,64,64]
+            self.train_data = torch.load(os.path.join(self.root, self.training_file))
         else:
-            self.test_data = torch.load(os.path.join(self.root, self.test_file))#[1000,20,64,64]
-
+            self.test_data = torch.load(os.path.join(self.root, self.test_file))
     def __getitem__(self, index):
-        """这也是迭代器的返回值
-            Args:index (int): IndexReturns:
-           tuple: (seq, target) where sampled sequences are splitted into a seq and target part
-        """
         if self.train:
-            seq, target = self.train_data[index, :10], self.train_data[index, 10:]
+            seq= self.train_data[index]
+            seq,label = self.transform(seq),index
         else:
-            seq, target = self.test_data[index, :10], self.test_data[index, 10:]
-        return seq, target#seq:[-1,10,64,64],[-1,10,64,64]
-
+            seq= self.test_data[index]
+            seq,label = self.transform(seq),index
+        return seq
     def __len__(self):
         if self.train:
             return len(self.train_data)
         else:
             return len(self.test_data)
-
 #给出文件路径，用numpy读取，torch序列化存入磁盘
     def dataload(self):
         print('Processing...')
@@ -158,7 +152,6 @@ class MovingMNIST(torch.utils.data.Dataset):
         with open(os.path.join(self.root,self.test_file), 'wb') as f:
             torch.save(test_set, f)
         print('Done!')
-
     def __repr__(self):
     #输入对象名时反馈的信息
         fmt_str = 'Dataset ' + self.__class__.__name__ + '\n'

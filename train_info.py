@@ -34,7 +34,7 @@ img_channel = 1
 sample_num =400
 epoch = 60
 gp_mode = 'hingev2'
-experiment_name = args.experiment_name+gp_mode
+experiment_name = args.experiment_name+'_'+gp_mode
 
 if not os.path.exists('./info_output/'):
     os.mkdir('./info_output/')
@@ -53,26 +53,27 @@ if not os.path.exists(ckpt_dir):
 	os.mkdir(ckpt_dir)
 
 
-#--------------------------data-----------------------
-transform = torchvision.transforms.Compose(
-    [torchvision.transforms.Resize(size=(input_size, input_size), interpolation=Image.BICUBIC),
-     torchvision.transforms.ToTensor(),#Img2Tensor
-     torchvision.transforms.Normalize(mean=[0.5], std=[0.5])# 取值范围(0,1)->(-1,1)
-     #torchvision.transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)), #单通道改三通道
-     #torchvision.transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)
 
-     ]
-)
-train_loader = torch.utils.data.DataLoader(
-    #dataset=torchvision.datasets.FashionMNIST('./data/', train=True, download=True, transform=transform),
-    #dataset=torchvision.datasets.CIFAR10('./data', train=True, download=True, transform=transform),
-    dataset=torchvision.datasets.MNIST('./data/', train=True, download=True, transform=transform),
-    batch_size=batch_size,
-    shuffle=True,
-    num_workers=4,
-    pin_memory=gpu_mode,
-    drop_last=True
-)
+#--------------------------data-----------------------
+# transform = torchvision.transforms.Compose(
+#     [torchvision.transforms.Resize(size=(input_size, input_size), interpolation=Image.BICUBIC),
+#      torchvision.transforms.ToTensor(),#Img2Tensor
+#      torchvision.transforms.Normalize(mean=[0.5], std=[0.5])# 取值范围(0,1)->(-1,1)
+#      #torchvision.transforms.Lambda(lambda x: torch.cat((x, x, x), dim=0)), #单通道改三通道
+#      #torchvision.transforms.Normalize(mean=[0.5] * 3, std=[0.5] * 3)
+
+#      ]
+# )
+# train_loader = torch.utils.data.DataLoader(
+#     #dataset=torchvision.datasets.FashionMNIST('./data/', train=True, download=True, transform=transform),
+#     #dataset=torchvision.datasets.CIFAR10('./data', train=True, download=True, transform=transform),
+#     dataset=torchvision.datasets.MNIST('./data/', train=True, download=True, transform=transform),
+#     batch_size=batch_size,
+#     shuffle=True,
+#     num_workers=4,
+#     pin_memory=gpu_mode,
+#     drop_last=True
+# )
 
 #celeba
 # transform = torchvision.transforms.Compose([
@@ -94,6 +95,12 @@ train_loader = torch.utils.data.DataLoader(
 # path = '/_yucheng/dataSet/face3d//face3d'
 # face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
 # train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
+
+train_set = utils.MovingMNIST(train=True,transform=torchvision.transforms.Normalize(mean=[127.5], std=[127.5]))#[0,255]->[-1,1]
+train_loader = torch.utils.data.DataLoader(
+                 dataset=train_set,
+                 batch_size=batch_size,
+                 shuffle=False)
 
 # 固定noise和cc，每c_d个变一次c_d
 sample_z = torch.zeros((sample_num, z_dim_num))
@@ -192,14 +199,15 @@ for i in tqdm.trange(epoch):
 			y, z, c_d, c_c = y.cuda(), z.cuda(), c_d.cuda(), c_c.cuda()
 # update D network
 		D_optimizer.zero_grad()
-		D_real, _, _ = D(y)
-		#D_real_loss = BCE_loss(D_real, d_real_flag)
 		y_f = G(z, c_c, c_d)
+		D_real, _, _ = D(y)
 		D_fake, _, _ = D(y_f)
-		#D_fake_loss = BCE_loss(D_fake, d_fake_flag)
-		D_real_loss, D_fake_loss = d_loss_fn(D_real, D_fake)
+		D_real_loss = BCE_loss(D_real, d_real_flag)
+		D_fake_loss = BCE_loss(D_fake, d_fake_flag)
+		#D_real_loss, D_fake_loss = d_loss_fn(D_real, D_fake)
 		#gp = loss_norm_gp.gradient_penalty(D, y, y_f, mode=gp_mode)
-		gp = loss_norm_gp.gradient_penalty(functools.partial(D), y, y_f, gp_mode='0-gp', sample_mode='line')
+		#gp = loss_norm_gp.gradient_penalty(functools.partial(D), y, y_f, gp_mode='0-gp', sample_mode='line')
+		gp=0
 		D_loss = D_real_loss + D_fake_loss + gp
 		train_hist['D_loss'].append(D_loss.item())
 		D_loss.backward(retain_graph=True)
