@@ -100,7 +100,9 @@ train_set = utils.MovingMNIST(train=True,transform=torchvision.transforms.Normal
 train_loader = torch.utils.data.DataLoader(
                  dataset=train_set,
                  batch_size=batch_size,
-                 shuffle=False)
+                 shuffle=False,
+                 drop_last=True
+                 )
 
 # 固定noise和cc，每c_d个变一次c_d
 sample_z = torch.zeros((sample_num, z_dim_num))
