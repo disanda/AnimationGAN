@@ -129,7 +129,7 @@ class MovingMNIST(torch.utils.data.Dataset):
         else:
             seq= self.test_data[index]
             seq,label = self.transform(seq),index
-        return seq
+        return seq,label
     def __len__(self):
         if self.train:
             return len(self.train_data)
