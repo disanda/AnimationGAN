@@ -107,7 +107,7 @@ class MovingMNIST(torch.utils.data.Dataset):
     """`MovingMNIST <http://www.cs.toronto.edu/~nitish/unsupervised_video/>`_ Dataset.
     Args:root 数据存放路径/ train 是训练集还是数据集 / split 测试集数量 /dataload 是否加载下载数据(第一次) /transform /target_transform 数据格式转换 
     """
-    training_file = '/_yucheng/dataSet/moving_mnist/data/moving_mnist_train'
+    training_file = '/_yucheng/dataSet/moving_mnist/data/moving_mnist_train_oneFrame'
     test_file = 'moving_mnist_test'
     def __init__(self, root='./data', train=True, split=1000, transform=None, target_transform=None, dataload=False):
         self.root = os.path.expanduser(root)#创建路径root
