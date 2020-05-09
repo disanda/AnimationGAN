@@ -205,7 +205,7 @@ for i in tqdm.trange(epoch):
 		D_real, _, _ = D(y)
 		D_fake, _, _ = D(y_f)
 		# print('--------------')
-		# print(D_real.shape)
+		print(D_real.shape)
 		# print(d_real_flag.shape)
 		# print('--------------')
 		D_real_loss = BCE_loss(D_real, d_real_flag)#1
