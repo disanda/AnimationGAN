@@ -600,7 +600,7 @@ class discriminator_mwm2(nn.Module):
         x = self.fc(x)
         a = torch.sigmoid(x)
         b = x[:, self.output_dim:self.output_dim + self.len_discrete_code]
-        c = fc2(b)
+        c = self.fc2(b)
         return a, b, c
 
 
