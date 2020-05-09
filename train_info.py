@@ -33,7 +33,7 @@ input_size = 64
 img_channel = 1
 sample_num =400
 epoch = 60
-gp_mode = 'GAN'
+gp_mode = 'wmw'
 experiment_name = args.experiment_name+'_'+gp_mode
 
 if not os.path.exists('./info_output/'):
@@ -141,8 +141,8 @@ if gpu_mode == True:
 
 #------------------------model setting-----------------
 
-G = model.generator_info(z_dim=z_dim_num, output_channel=img_channel, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
-D = model.discriminator_info(input_channel=img_channel, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
+G = model.generator_wmw(z_dim=z_dim_num, output_channel=img_channel, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
+D = model.discriminator_wmw(input_channel=img_channel, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
 G_optimizer = optim.Adam(G.parameters(), lr=0.0002, betas=(0.5, 0.999))
 D_optimizer = optim.Adam(D.parameters(), lr=0.0002, betas=(0.5, 0.999))
 info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()), lr=0.0002, betas=(0.5, 0.9))#G,D都更新
