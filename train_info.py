@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='moving_mnist+_cd10_cc10')
+parser.add_argument('--name', dest='experiment_name', default='moving_mnist+_cd20_cc20')
 args = parser.parse_args()
 
 
@@ -26,14 +26,14 @@ gpu_mode = True
 SUPERVISED = False
 batch_size = 64
 z_dim_num = 100
-c_d_num = 10
-c_c_num = 10
+c_d_num = 20
+c_c_num = 20
 #input_dim: z =100 ,c_d =10 c_c = 2
 input_size = 64
 img_channel = 1
 sample_num =400
 epoch = 60
-gp_mode = 'hingev2'
+gp_mode = 'GAN'
 experiment_name = args.experiment_name+'_'+gp_mode
 
 if not os.path.exists('./info_output/'):
@@ -100,7 +100,7 @@ train_set = utils.MovingMNIST(train=True,transform=torchvision.transforms.Normal
 train_loader = torch.utils.data.DataLoader(
                  dataset=train_set,
                  batch_size=batch_size,
-                 shuffle=False,
+                 shuffle=True,
                  drop_last=True
                  )
 
@@ -204,8 +204,8 @@ for i in tqdm.trange(epoch):
 		y_f = G(z, c_c, c_d)
 		D_real, _, _ = D(y)
 		D_fake, _, _ = D(y_f)
-		D_real_loss = BCE_loss(D_real, d_real_flag)
-		D_fake_loss = BCE_loss(D_fake, d_fake_flag)
+		D_real_loss = BCE_loss(D_real, d_real_flag)#1
+		D_fake_loss = BCE_loss(D_fake, d_fake_flag)#0
 		#D_real_loss, D_fake_loss = d_loss_fn(D_real, D_fake)
 		#gp = loss_norm_gp.gradient_penalty(D, y, y_f, mode=gp_mode)
 		#gp = loss_norm_gp.gradient_penalty(functools.partial(D), y, y_f, gp_mode='0-gp', sample_mode='line')
@@ -247,8 +247,10 @@ for i in tqdm.trange(epoch):
 		samples = (samples + 1) / 2
 		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_c.png' % i, nrow=20)
 		torch.save({'epoch': epoch + 1,'G': G.state_dict()},'%s/Epoch_(%d).ckpt' % (ckpt_dir, epoch + 1))#save model
-
-
+		with open(save_root+'setting.txt', 'a') as f:
+				print('----',file=f)
+				print(train_hist,file=f)
+				print('----',file=f)
 		# print('-------------')
 		# print(D_real.shape)
 		# print(d_real_flag.shape)
