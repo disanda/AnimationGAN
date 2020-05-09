@@ -148,7 +148,7 @@ D_optimizer = optim.Adam(D.parameters(), lr=0.0002, betas=(0.5, 0.999))
 info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()), lr=0.0002, betas=(0.5, 0.9))#G,D都更新
 d_real_flag, d_fake_flag = torch.ones(batch_size), torch.zeros(batch_size)
 
-with open(save_root+'setting.txt', 'a') as f:
+with open(save_root+'setting.txt', 'w') as f:
 	print('----',file=f)
 	print(G,file=f)
 	print('----',file=f)

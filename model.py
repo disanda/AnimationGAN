@@ -507,10 +507,10 @@ class discriminator_mwm(nn.Module):
         self.len_continuous_code = len_continuous_code  # gaussian distribution (e.g. rotation, thickness)
         self.conv = nn.Sequential(
             nn.Conv2d(self.input_dim, 32, 4, 2, 1),#input_size/2
-            nn.BatchNorm2d(32),
+            #nn.BatchNorm2d(32),
             nn.LeakyReLU(0.2),
             nn.Conv2d(32, 64, 4, 2, 1),#input_size/4
-            nn.BatchNorm2d(64),
+            #nn.BatchNorm2d(64),
             nn.LeakyReLU(0.2),
             nn.Conv2d(64, 128, 4, 2, 1),#input_size/8
             nn.BatchNorm2d(128),
