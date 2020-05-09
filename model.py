@@ -526,7 +526,7 @@ class discriminator_mwm(nn.Module):
         loss_norm_gp.initialize_weights(self)
     def forward(self, input):
         x = self.conv(input)
-        x = x.view(-1, 128 * (self.input_size // 4) * (self.input_size // 4))
+        x = x.view(-1, 128 * (self.input_size // 2) * (self.input_size // 2))
         x = self.fc(x)
         a = torch.sigmoid(x[:, self.output_dim])
         b = x[:, self.output_dim:self.output_dim + self.len_continuous_code]
