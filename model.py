@@ -589,18 +589,19 @@ class discriminator_mwm2(nn.Module):
             nn.Linear(128 * (self.input_size // 8) * (self.input_size // 8), 1024),
             nn.BatchNorm1d(1024),
             nn.LeakyReLU(0.2),
-            nn.Linear(1024, self.output_dim+self.len_discrete_code),
+            nn.Linear(1024, self.len_discrete_code),
             #nn.Sigmoid(),
         )
         self.fc2 = nn.Linear(self.len_discrete_code,self.len_continuous_code)
+        self.fc3 = nn.Linear(self.len_continuous_code,1)
         loss_norm_gp.initialize_weights(self)
     def forward(self, input):
         x = self.conv(input)
         x = x.view(-1, 128 * (self.input_size // 8) * (self.input_size // 8))
         x = self.fc(x)
-        a = torch.sigmoid(x)
-        b = x[:, self.output_dim:self.output_dim + self.len_discrete_code]
+        b = x
         c = self.fc2(b)
+        a = torch.sigmoid(self.fc3(c))
         return a, b, c
 
 
