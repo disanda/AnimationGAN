@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='actions_wmw+_cd20_cc20')
+parser.add_argument('--name', dest='experiment_name', default='actions_wmw+_cd20_cc10')
 args = parser.parse_args()
 
 
@@ -27,7 +27,7 @@ SUPERVISED = False
 batch_size = 120
 z_dim_num = 100
 c_d_num = 20
-c_c_num = 20
+c_c_num = 10
 #input_dim: z =100 ,c_d =10 c_c = 2
 input_size = 64
 img_channel = 3
