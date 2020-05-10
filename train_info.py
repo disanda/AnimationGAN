@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='actions_wmw+_cd20_cc10')
+parser.add_argument('--name', dest='experiment_name', default='shapes_wmw+_cd20_cc10')
 args = parser.parse_args()
 
 
@@ -124,8 +124,8 @@ transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
-path = '/_yucheng/dataSet/moco/moco_actions/'
-#path = '/_yucheng/dataSet/moco/moco_shapes/'
+#path = '/_yucheng/dataSet/moco/moco_actions/'
+path = '/_yucheng/dataSet/moco/moco_shapes/'
 face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
 train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
 
