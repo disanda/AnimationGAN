@@ -469,17 +469,18 @@ class generator_mwm(nn.Module):
         self.len_continuous_code = len_continuous_code  # gaussian distribution (e.g. rotation, thickness)
         self.fc = nn.Sequential(
             nn.Linear(self.z_dim + self.len_discrete_code + self.len_continuous_code, 1024),
-            nn.BatchNorm1d(1024),
+            #nn.BatchNorm1d(1024),
             nn.ReLU(),
             nn.Linear(1024, 128 * (self.input_size // 8) * (self.input_size // 8)),#[1024,128*8*8]-input_size=32
-            nn.BatchNorm1d(128 * (self.input_size // 8) * (self.input_size // 8)),
+            #nn.BatchNorm1d(128 * (self.input_size // 8) * (self.input_size // 8)),
             nn.ReLU(),
         )
         self.deconv = nn.Sequential(
             nn.ConvTranspose2d(128, 64, 4, 2, 1),
-            nn.BatchNorm2d(64),
+            #nn.BatchNorm2d(64),
+            nn.ReLU(),
             nn.ConvTranspose2d(64, 32, 4, 2, 1),
-            nn.BatchNorm2d(32),
+            #nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.ConvTranspose2d(32, self.output_dim, 4, 2, 1),
             nn.Tanh(),
@@ -509,12 +510,12 @@ class discriminator_mwm(nn.Module):
             #nn.BatchNorm2d(64),
             nn.LeakyReLU(0.2),
             nn.Conv2d(64, 128, 4, 2, 1),#input_size/8
-            nn.BatchNorm2d(128),
+            #nn.BatchNorm2d(128),
             nn.LeakyReLU(0.2),
         )
         self.fc = nn.Sequential(
             nn.Linear(128 * (self.input_size // 8) * (self.input_size // 8), 1024),
-            nn.BatchNorm1d(1024),
+            #nn.BatchNorm1d(1024),
             nn.LeakyReLU(0.2),
             nn.Linear(1024, self.output_dim + self.len_continuous_code + self.len_discrete_code),
             # nn.Sigmoid(),
@@ -551,6 +552,7 @@ class generator_mwm2(nn.Module):
         self.deconv = nn.Sequential(
             nn.ConvTranspose2d(128, 64, 4, 2, 1),
             nn.BatchNorm2d(64),
+            nn.ReLU(),
             nn.ConvTranspose2d(64, 32, 4, 2, 1),
             nn.BatchNorm2d(32),
             nn.ReLU(),
