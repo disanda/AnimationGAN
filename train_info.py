@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='moving_wmw+_cd20_cc10')
+parser.add_argument('--name', dest='experiment_name', default='nemo_wmw+_cd20_cc10')
 args = parser.parse_args()
 
 
@@ -96,13 +96,29 @@ if not os.path.exists(ckpt_dir):
 # face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
 # train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
 
-train_set = utils.MovingMNIST(train=True,transform=torchvision.transforms.Normalize(mean=[127.5], std=[127.5]))#[0,255]->[-1,1]
-train_loader = torch.utils.data.DataLoader(
-                 dataset=train_set,
-                 batch_size=batch_size,
-                 shuffle=True,
-                 drop_last=True
-                 )
+#-------------moving-mnist--------------
+# train_set = utils.MovingMNIST(train=True,transform=torchvision.transforms.Normalize(mean=[127.5], std=[127.5]))#[0,255]->[-1,1]
+# train_loader = torch.utils.data.DataLoader(
+#                  dataset=train_set,
+#                  batch_size=batch_size,
+#                  shuffle=True,
+#                  drop_last=True
+#                  )
+
+
+#nemo
+transform = torchvision.transforms.Compose([
+        #torchvision.transforms.CenterCrop(160),
+        torchvision.transforms.Resize((64,64)),
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
+    ])
+path = '/_yucheng/dataSet/nemo/nemo'
+face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
+train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
+
+
+
 
 # 固定noise和cc，每c_d个变一次c_d
 sample_z = torch.zeros((sample_num, z_dim_num))
