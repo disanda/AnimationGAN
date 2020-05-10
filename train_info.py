@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='moving_wmw2+_cd20_cc20')
+parser.add_argument('--name', dest='experiment_name', default='moving_wmw+_cd20_cc10')
 args = parser.parse_args()
 
 
@@ -27,7 +27,7 @@ SUPERVISED = False
 batch_size = 64
 z_dim_num = 100
 c_d_num = 20
-c_c_num = 20
+c_c_num = 10
 #input_dim: z =100 ,c_d =10 c_c = 2
 input_size = 64
 img_channel = 1
@@ -141,11 +141,11 @@ if gpu_mode == True:
 
 #------------------------model setting-----------------
 
-G = model.generator_mwm2(z_dim=z_dim_num, output_channel=img_channel, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)  
-D = model.discriminator_mwm2(input_channel=img_channel, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
-G_optimizer = optim.Adam(G.parameters(), lr=0.0002, betas=(0.5, 0.999))
-D_optimizer = optim.Adam(D.parameters(), lr=0.0002, betas=(0.5, 0.999))
-info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()), lr=0.0002, betas=(0.5, 0.9))#G,D都更新
+G = model.generator_mwm(z_dim=z_dim_num, output_channel=img_channel, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)  
+D = model.discriminator_mwm(input_channel=img_channel, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
+G_optimizer = optim.Adam(G.parameters(), lr=0.0001, betas=(0.9, 0.999))
+D_optimizer = optim.Adam(D.parameters(), lr=0.00005, betas=(0.9, 0.999))
+info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()), lr=0.00005, betas=(0.9, 0.999))#G,D都更新
 d_real_flag, d_fake_flag = torch.ones(batch_size), torch.zeros(batch_size)
 
 with open(save_root+'setting.txt', 'w') as f:
