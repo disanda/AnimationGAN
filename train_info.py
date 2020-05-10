@@ -143,9 +143,9 @@ if gpu_mode == True:
 
 G = model.generator_mwm(z_dim=z_dim_num, output_channel=img_channel, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)  
 D = model.discriminator_mwm(input_channel=img_channel, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
-G_optimizer = optim.Adam(G.parameters(), lr=0.0001, betas=(0.5, 0.8))
-D_optimizer = optim.Adam(D.parameters(), lr=0.00005, betas=(0.5, 0.8))
-info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()), lr=0.00005, betas=(0.5, 0.8))#G,D都更新
+G_optimizer = optim.Adam(G.parameters(),  betas=(0.5, 0.8))
+D_optimizer = optim.Adam(D.parameters(),  betas=(0.5, 0.8))
+info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()),betas=(0.5, 0.8))#G,D都更新
 d_real_flag, d_fake_flag = torch.ones(batch_size), torch.zeros(batch_size)
 
 with open(save_root+'setting.txt', 'w') as f:
