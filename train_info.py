@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='nemo_wmw+_cd20_cc20')
+parser.add_argument('--name', dest='experiment_name', default='actions_wmw+_cd20_cc20')
 args = parser.parse_args()
 
 
@@ -107,16 +107,27 @@ if not os.path.exists(ckpt_dir):
 
 
 #nemo
+# transform = torchvision.transforms.Compose([
+#         #torchvision.transforms.CenterCrop(160),
+#         torchvision.transforms.Resize((64,64)),
+#         torchvision.transforms.ToTensor(),
+#         torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
+#     ])
+# path = '/_yucheng/dataSet/nemo/nemo'
+# face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
+# train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
+
+#------------ moco_actions----moco_shapes --------------
 transform = torchvision.transforms.Compose([
         #torchvision.transforms.CenterCrop(160),
         torchvision.transforms.Resize((64,64)),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
-path = '/_yucheng/dataSet/nemo/nemo'
+path = '/_yucheng/dataSet/moco/moco_actions/'
+#path = '/_yucheng/dataSet/moco/moco_shapes/'
 face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
 train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
-
 
 
 
