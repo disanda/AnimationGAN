@@ -143,9 +143,9 @@ if gpu_mode == True:
 
 G = model.generator_mwm(z_dim=z_dim_num, output_channel=img_channel, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)  
 D = model.discriminator_mwm(input_channel=img_channel, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
-G_optimizer = optim.Adam(G.parameters(),  betas=(0.5, 0.95),amsgrad=True)
-D_optimizer = optim.Adam(D.parameters(), lr=0.0005,betas=(0.5, 0.95),amsgrad=True)
-info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()),lr=0.0005,betas=(0.5, 0.95),amsgrad=True)#G,D都更新
+G_optimizer = optim.Adam(G.parameters(),  betas=(0.5, 0.99),amsgrad=True)
+D_optimizer = optim.Adam(D.parameters(), lr=0.0002,betas=(0.5, 0.99),amsgrad=True)
+info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()),lr=0.0001,betas=(0.6, 0.95),amsgrad=True)#G,D都更新
 d_real_flag, d_fake_flag = torch.ones(batch_size), torch.zeros(batch_size)
 
 with open(save_root+'setting.txt', 'w') as f:
@@ -229,8 +229,8 @@ for i in tqdm.trange(epoch):
 		G_optimizer.zero_grad()
 		y_f = G(z, c_c, c_d)
 		D_fake, D_cont, D_disc = D(y_f)
-		#G_loss = BCE_loss(D_fake, d_real_flag)
-		G_loss = g_loss_fn(D_fake)
+		G_loss = BCE_loss(D_fake, d_real_flag)
+		#G_loss = g_loss_fn(D_fake)
 		train_hist['G_loss'].append(G_loss.item())
 		G_loss.backward(retain_graph=True)
 		G_optimizer.step()
