@@ -24,7 +24,7 @@ args = parser.parse_args()
 gpu_mode = True
 #SUPERVISED = True
 SUPERVISED = False
-batch_size = 120
+batch_size = 128
 z_dim_num = 100
 c_d_num = 10
 c_d2_num =20
@@ -299,7 +299,7 @@ for i in tqdm.trange(epoch):
 	with torch.no_grad():
 		G.eval()
 		image_frame_dim = int(np.floor(np.sqrt(sample_num)))
-		samples = G(sample_z, sample_d, sample_d2)
+		samples = G(sample_z, sample_d1, sample_d2)
 		samples = (samples + 1) / 2
 		torchvision.utils.save_image(samples, save_dir+'/%d_Epoch—c_d.png' % i, nrow=20)
 		samples = G(sample_z2, sample_d1_2, sample_d2_2)
