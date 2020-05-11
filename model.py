@@ -659,7 +659,7 @@ class discriminator_mwm3(nn.Module):
             #nn.BatchNorm2d(64),
             nn.LeakyReLU(0.2),
             nn.Conv2d(64, 128, 4, 2, 1),#input_size/8
-            #nn.BatchNorm2d(128),
+            nn.BatchNorm2d(128),
             nn.LeakyReLU(0.2),
         )
         self.fc = nn.Sequential(

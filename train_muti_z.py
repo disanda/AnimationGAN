@@ -34,7 +34,7 @@ input_size = 64
 img_channel = 3
 sample_num =400
 epoch = 60
-gp_mode = 'wmw'
+gp_mode = 'v2'
 experiment_name = args.experiment_name+'_'+gp_mode
 
 if not os.path.exists('./info_output/'):
