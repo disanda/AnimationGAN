@@ -285,7 +285,7 @@ for i in tqdm.trange(epoch):
 		#cont_loss = MSE_loss(D_cont, c_c)
 		disc2_loss = CE_loss(D_disc2, torch.max(c_d2, 1)[1])
 		#info_loss = disc_loss + cont_loss
-		ubfo_loss = disc_loss + disc2_loss
+		info_loss = disc_loss + disc2_loss
 		train_hist['info_loss'].append(info_loss.item())
 		info_loss.backward()
 		info_optimizer.step()
