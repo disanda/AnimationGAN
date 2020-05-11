@@ -178,9 +178,9 @@ for i in range(sample_num//c_d_num):		#每c_d个noise,c_d相同,c_c不同
 
 #gpu
 if gpu_mode == True:
-	sample_z, sample_d, sample_c, sample_z2, sample_d2, sample_c2 = \
-	sample_z.cuda(), sample_d.cuda(), sample_c.cuda(), \
-	sample_z2.cuda(), sample_d2.cuda(), sample_c2.cuda()
+	sample_z, sample_d1, sample_d2, sample_z2, sample_d1_2, sample_d2_2 = \
+	sample_z.cuda(), sample_d1.cuda(), sample_2.cuda(), \
+	sample_z2.cuda(), sample_d1_2.cuda(), sample_d2_2.cuda()
 
 #------------------------model setting-----------------
 
