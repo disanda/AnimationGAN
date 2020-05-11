@@ -607,17 +607,17 @@ class discriminator_mwm2(nn.Module):
         return a, b, c
 
 
-#-----------------MWM-GAN_V3--------------------多一个网络Q输出C即可
+#-----------------MWM-GAN_V3--------------------层次分类离散d
 class generator_mwm3(nn.Module):
     def __init__(self, z_dim=100, output_channel=1, input_size=64, c_d1=10, c_d2=20):
         super().__init__()
         self.z_dim = z_dim
         self.output_dim = output_channel
         self.input_size = input_size
-        self.len_discrete_code = len_discrete_code  # categorical distribution (i.e. label)
-        self.len_continuous_code = len_continuous_code  # gaussian distribution (e.g. rotation, thickness)
+        self.c_d1 = c_d1   
+        self.c_d2 = c_d2  
         self.fc = nn.Sequential(
-            nn.Linear(self.z_dim + self.len_discrete_code + self.len_continuous_code, 1024),
+            nn.Linear(self.z_dim + self.c_d1 + self.c_d2, 1024),
             nn.BatchNorm1d(1024),
             nn.ReLU(),
             nn.Linear(1024, 128 * (self.input_size // 8) * (self.input_size // 8)),#[1024,128*8*8]-input_size=32
@@ -635,8 +635,8 @@ class generator_mwm3(nn.Module):
             nn.Tanh(),
         )
         loss_norm_gp.initialize_weights(self)
-    def forward(self, input, cont_code, dist_code):
-        x = torch.cat([input, cont_code, dist_code], 1)
+    def forward(self, input, d1, d2):
+        x = torch.cat([input, d1, d2], 1)
         x = self.fc(x)
         x = x.view(-1, 128, (self.input_size // 8), (self.input_size // 8))#[-1,128,8,8]
         x = self.deconv(x)
@@ -644,13 +644,13 @@ class generator_mwm3(nn.Module):
 
 class discriminator_mwm3(nn.Module):
     # 输入是图片，输出是按照参数分为 [-1, output_dim] , [-1, len_continuous_code] , [-1 , len_continuous_code]
-    def __init__(self, input_channel=1, output_dim=1, input_size=64, len_discrete_code=10, len_continuous_code=2):
+    def __init__(self, input_channel=1, output_dim=1, input_size=64, c_d1=10, c_d2=20):
         super().__init__()
         self.input_dim = input_channel
         self.output_dim = output_dim
         self.input_size = input_size
-        self.len_discrete_code = len_discrete_code  # categorical distribution (i.e. label)
-        self.len_continuous_code = len_continuous_code  # gaussian distribution (e.g. rotation, thickness)
+        self.c_d1 = c_d1  # categorical distribution (i.e. label)
+        self.c_d2 = c_d2  # gaussian distribution (e.g. rotation, thickness)
         self.conv = nn.Sequential(
             nn.Conv2d(self.input_dim, 32, 4, 2, 1),#input_size/2
             #nn.BatchNorm2d(32),
@@ -659,18 +659,24 @@ class discriminator_mwm3(nn.Module):
             #nn.BatchNorm2d(64),
             nn.LeakyReLU(0.2),
             nn.Conv2d(64, 128, 4, 2, 1),#input_size/8
-            nn.BatchNorm2d(128),
+            #nn.BatchNorm2d(128),
             nn.LeakyReLU(0.2),
         )
         self.fc = nn.Sequential(
             nn.Linear(128 * (self.input_size // 8) * (self.input_size // 8), 1024),
-            nn.BatchNorm1d(1024),
+            #nn.BatchNorm1d(1024),
             nn.LeakyReLU(0.2),
-            nn.Linear(1024, self.len_discrete_code),
+            nn.Linear(1024, self.c_d1),
             #nn.Sigmoid(),
         )
-        self.fc2 = nn.Linear(self.len_discrete_code,self.len_continuous_code)
-        self.fc3 = nn.Linear(self.len_continuous_code,1)
+        self.fc2 = nn.Sequential(
+            nn.LeakyReLU(0.2),
+            nn.Linear(self.c_d1,self.c_d2),
+        )
+        self.fc3 = nn.Sequential(
+            nn.LeakyReLU(0.2),
+            nn.Linear(self.c_d2,1),
+        )
         loss_norm_gp.initialize_weights(self)
     def forward(self, input):
         x = self.conv(input)
