@@ -609,7 +609,7 @@ class discriminator_mwm2(nn.Module):
 
 #-----------------MWM-GAN_V3--------------------多一个网络Q输出C即可
 class generator_mwm3(nn.Module):
-    def __init__(self, z_dim=100, output_channel=1, input_size=64, c_d=10, c_d=20):
+    def __init__(self, z_dim=100, output_channel=1, input_size=64, c_d1=10, c_d2=20):
         super().__init__()
         self.z_dim = z_dim
         self.output_dim = output_channel
