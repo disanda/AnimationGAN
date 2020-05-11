@@ -174,7 +174,7 @@ for i in range(sample_num//c_d_num):		#每c_d个noise,c_d相同,c_c不同
 	#d_label = random.randint(0,c_d_num-1)
 	d_label = i%c_d_num
 	sample_d2[i*c_d_num:(i+1)*c_d_num, d_label] = 1
-	sample_c2[i*c_d_num:(i+1)*c_d_num,i%c_c_num] = temp_c
+	#sample_c2[i*c_d_num:(i+1)*c_d_num,i%c_c_num] = temp_c
 
 #gpu
 if gpu_mode == True:
