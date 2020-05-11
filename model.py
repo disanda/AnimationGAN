@@ -685,6 +685,7 @@ class discriminator_mwm3(nn.Module):
         b = x
         c = self.fc2(b)
         a = torch.sigmoid(self.fc3(c))
+        a = a.squeeze(1)
         return a, b, c
 
 
