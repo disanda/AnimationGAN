@@ -247,7 +247,7 @@ for i in tqdm.trange(epoch):
 		else:
 			c_d = torch.from_numpy(np.random.multinomial(1, c_d_num * [float(1.0 / c_d_num)],size=[batch_size])).type(torch.FloatTensor)#投骰子函数,随机化y_disc_
 		#c_c = torch.from_numpy(np.random.uniform(-1, 1, size=(batch_size, c_c_num))).type(torch.FloatTensor)
-		c_c = 0
+		c_c = torch.randn(1)
 		c_d2 = torch.from_numpy(np.random.multinomial(1, c_d2_num * [float(1.0 / c_d2_num)],size=[batch_size])).type(torch.FloatTensor)
 		if gpu_mode:
 			y, z, c_d, c_c ,c_d2= y.cuda(), z.cuda(), c_d.cuda(), c_c.cuda(),c_d2.cuda()
