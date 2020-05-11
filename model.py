@@ -486,8 +486,8 @@ class generator_mwm(nn.Module):
             nn.Tanh(),
         )
         loss_norm_gp.initialize_weights(self)
-    def forward(self, input, cont_code, dist_code):
-        x = torch.cat([input, cont_code, dist_code], 1)
+    def forward(self, input, dist_code, cont_code):
+        x = torch.cat([input, dist_code, cont_code], 1)
         x = self.fc(x)
         x = x.view(-1, 128, (self.input_size // 8), (self.input_size // 8))#[-1,128,8,8]
         x = self.deconv(x)
@@ -526,8 +526,8 @@ class discriminator_mwm(nn.Module):
         x = x.view(-1, 128 * (self.input_size // 8) * (self.input_size // 8))
         x = self.fc(x)
         a = torch.sigmoid(x[:, self.output_dim])
-        b = x[:, self.output_dim:self.output_dim + self.len_continuous_code]
-        c = x[:, self.output_dim + self.len_continuous_code:]
+        b = x[:, self.output_dim:self.output_dim + self.len_discrete_code]
+        c = x[:, self.output_dim + self.len_discrete_code:]
         return a, b, c
 
 
