@@ -251,7 +251,7 @@ for i in tqdm.trange(epoch):
 # update G network
 		G_optimizer.zero_grad()
 		y_f = G(z, c_c, c_d)
-		D_fake, D_cont, D_disc = D(y_f)
+		D_fake,D_disc,D_cont = D(y_f)
 		G_loss = BCE_loss(D_fake, d_real_flag)
 		#G_loss = g_loss_fn(D_fake)
 		train_hist['G_loss'].append(G_loss.item())
