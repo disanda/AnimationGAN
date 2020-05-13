@@ -259,10 +259,10 @@ for i in tqdm.trange(epoch):
 		G_optimizer.step()
 # information loss
 		disc_loss = CE_loss(D_disc, torch.max(c_d, 1)[1])#第二个是将Label由one-hot转化为10进制数组
-		print('--------------')
-		print(D_cont.shape)
-		print(c_c.shape)
-		print('--------------')
+		# print('--------------')
+		# print(D_cont.shape)
+		# print(c_c.shape)
+		# print('--------------')
 		cont_loss = MSE_loss(D_cont, c_c)
 		info_loss = disc_loss + cont_loss
 		train_hist['info_loss'].append(info_loss.item())
