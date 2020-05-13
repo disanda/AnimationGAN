@@ -19,8 +19,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--name', dest='experiment_name', default='shapes_wmw3+_cd20_cd20')
 args = parser.parse_args()
 
-
-
 gpu_mode = True
 #SUPERVISED = True
 SUPERVISED = False
@@ -138,13 +136,12 @@ temp = torch.zeros((c_d_num, 1))
 temp_d = torch.zeros((sample_num, 1))
 
 for i in range(sample_num//c_d_num):
-	sample_z[i * c_d_num] = torch.rand(1, z_dim_num)#为连续c_d个的样本赋值。
+	sample_z[i * c_d_num] = torch.rand(1, z_dim_num)#为连续c_d个的样本赋相同的c_d值。
 	for j in range(c_d_num):
 		sample_z[i * c_d_num + j] = sample_z[i * c_d_num]#相同c_d的noize都相同
 
 for i in range(c_d_num):
 	temp[i, 0] = i #每一个标签
-
 for i in range(sample_num//c_d_num):
 	temp_d[i * c_d_num: (i + 1) * c_d_num] = temp[i%c_d_num] #每c_d个的d一样
 sample_d1 = torch.zeros((sample_num, c_d_num)).scatter_(1, temp_d.type(torch.LongTensor), 1)#[-1,c_d_num]
@@ -160,7 +157,7 @@ for i in range(c_d2_num):
 	temp[i, 0] = i #每一个标签
 
 for i in range(sample_num):
-	temp_d[i] = temp[i%c_d2_num] #每c_d个的d一样
+	temp_d[i] = temp[i%c_d2_num] #每c_d个的d不一样
 sample_d2_2 = torch.zeros((sample_num, c_d2_num)).scatter_(1, temp_d.type(torch.LongTensor), 1)
 
 

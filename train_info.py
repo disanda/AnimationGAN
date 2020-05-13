@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='shapes_wmw+_cd20_cc20')
+parser.add_argument('--name', dest='experiment_name', default='actions_wmw+_cd100_cc10')
 args = parser.parse_args()
 
 
@@ -24,16 +24,16 @@ args = parser.parse_args()
 gpu_mode = True
 #SUPERVISED = True
 SUPERVISED = False
-batch_size = 120
+batch_size = 300
 z_dim_num = 100
-c_d_num = 20
-c_c_num = 20
+c_d_num = 100
+c_c_num = 10
 #input_dim: z =100 ,c_d =10 c_c = 2
 input_size = 64
 img_channel = 3
 sample_num =400
 epoch = 60
-gp_mode = 'wmw'
+gp_mode = 'batch300'
 experiment_name = args.experiment_name+'_'+gp_mode
 
 if not os.path.exists('./info_output/'):
@@ -124,8 +124,8 @@ transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
-#path = '/_yucheng/dataSet/moco/moco_actions/'
-path = '/_yucheng/dataSet/moco/moco_shapes/'
+path = '/_yucheng/dataSet/moco/moco_actions/'
+#path = '/_yucheng/dataSet/moco/moco_shapes/'
 face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
 train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
 
@@ -141,7 +141,7 @@ for i in range(sample_num//c_d_num):
 
 for i in range(c_d_num):
 	temp[i, 0] = i #每一个标签
-	temp_d = torch.zeros((sample_num, 1))
+temp_d = torch.zeros((sample_num, 1))
 for i in range(sample_num//c_d_num):
 	temp_d[i * c_d_num: (i + 1) * c_d_num] = temp[i%c_d_num] #每c_d个的d一样
 sample_d = torch.zeros((sample_num, c_d_num)).scatter_(1, temp_d.type(torch.LongTensor), 1)
