@@ -238,10 +238,6 @@ for i in tqdm.trange(epoch):
 		y_f = G(z, c_c, c_d)
 		D_real, _, _ = D(y)
 		D_fake, _, _ = D(y_f)
-		# print('--------------')
-		# print(D_real.shape)
-		# print(d_real_flag.shape)
-		# print('--------------')
 		D_real_loss = BCE_loss(D_real, d_real_flag)#1
 		D_fake_loss = BCE_loss(D_fake, d_fake_flag)#0
 		#D_real_loss, D_fake_loss = d_loss_fn(D_real, D_fake)
@@ -263,6 +259,10 @@ for i in tqdm.trange(epoch):
 		G_optimizer.step()
 # information loss
 		disc_loss = CE_loss(D_disc, torch.max(c_d, 1)[1])#第二个是将Label由one-hot转化为10进制数组
+		print('--------------')
+		print(D_cont.shape)
+		print(c_c.shape)
+		print('--------------')
 		cont_loss = MSE_loss(D_cont, c_c)
 		info_loss = disc_loss + cont_loss
 		train_hist['info_loss'].append(info_loss.item())
