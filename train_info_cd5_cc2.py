@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='cebela_wmw+_cd5_cc2')
+parser.add_argument('--name', dest='experiment_name', default='3dface_wmw+_cd5_cc2')
 args = parser.parse_args()
 
 
@@ -76,25 +76,25 @@ if not os.path.exists(ckpt_dir):
 # )
 
 #celeba
-transform = torchvision.transforms.Compose([
-        torchvision.transforms.CenterCrop(160),
-        torchvision.transforms.Resize(64),
-        torchvision.transforms.ToTensor(),
-        torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
-    ])
-data_dir = '/_yucheng/dataSet/celeba/'  # this path depends on your computer
-train_loader =  utils.load_celebA(data_dir, transform, batch_size, shuffle=True)
-
-#face_3d
 # transform = torchvision.transforms.Compose([
-#         #torchvision.transforms.CenterCrop(160),
-#         torchvision.transforms.Resize((64,64)),
+#         torchvision.transforms.CenterCrop(160),
+#         torchvision.transforms.Resize(64),
 #         torchvision.transforms.ToTensor(),
 #         torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
 #     ])
-# path = '/_yucheng/dataSet/face3d//face3d'
-# face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
-# train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
+# data_dir = '/_yucheng/dataSet/celeba/'  # this path depends on your computer
+# train_loader =  utils.load_celebA(data_dir, transform, batch_size, shuffle=True)
+
+#face_3d
+transform = torchvision.transforms.Compose([
+        #torchvision.transforms.CenterCrop(160),
+        torchvision.transforms.Resize((64,64)),
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
+    ])
+path = '/_yucheng/dataSet/face3d//face3d'
+face3d_dataset = torchvision.datasets.ImageFolder(path, transform=transform)
+train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size, shuffle=True,drop_last=True)
 
 #-------------moving-mnist--------------
 # train_set = utils.MovingMNIST(train=True,transform=torchvision.transforms.Normalize(mean=[127.5], std=[127.5]))#[0,255]->[-1,1]
