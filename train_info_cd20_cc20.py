@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='3dmmnist_wmw+_cd20_cc20_noNorm')
+parser.add_argument('--name', dest='experiment_name', default='3dmmnist_wmw+_cd20_cc20_noNorm_D')
 args = parser.parse_args()
 
 
@@ -24,7 +24,7 @@ args = parser.parse_args()
 gpu_mode = True
 #SUPERVISED = True
 SUPERVISED = False
-batch_size = 100
+batch_size = 64
 z_dim_num = 100
 c_d_num = 20
 c_c_num = 20

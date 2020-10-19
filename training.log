@@ -1,7 +1,10 @@
 # 3D face
 
-# Moving Mnist
+# ----------------Moving Mnist-------------
 观察 G和D中norm的作用
 
 3dmmnist_wmw+_cd20_cc20_noNorm
-#取消了fc和conv最后一层的norm
+#取消了GD的fc和conv最后一层的norm, 结果模式崩溃，单一图片
+
+#取消了D的fc和conv最后一层的norm, 
+

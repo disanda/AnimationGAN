@@ -13,10 +13,10 @@ class generator_mwm(nn.Module):
         self.len_continuous_code = len_continuous_code  # gaussian distribution (e.g. rotation, thickness)
         self.fc = nn.Sequential(
             nn.Linear(self.z_dim + self.len_discrete_code + self.len_continuous_code, 1024),
-            #nn.BatchNorm1d(1024),
+            nn.BatchNorm1d(1024),
             nn.ReLU(),
             nn.Linear(1024, 128 * (self.input_size // 8) * (self.input_size // 8)),#[1024,128*8*8]-input_size=32
-            #nn.BatchNorm1d(128 * (self.input_size // 8) * (self.input_size // 8)),
+            nn.BatchNorm1d(128 * (self.input_size // 8) * (self.input_size // 8)),
             nn.ReLU(),
         )
         self.deconv = nn.Sequential(
