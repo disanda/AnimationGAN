@@ -122,7 +122,7 @@ def gradient_penalty(f, real, fake, sample_mode, gp_mode, y):
     else:
         x = sample_fns[sample_mode](real, fake).detach() 
         x.requires_grad = True
-        _,_,pred = f(y)
+        _,_,pred = f(y.detach())
         grad = torch.autograd.grad(pred, x, grad_outputs=torch.ones_like(pred), create_graph=True)[0]
         gp = gp_fns[gp_mode](grad)
     return gp
