@@ -14,5 +14,7 @@
 
 
 >>> 3dmmnist_wmw+_cd20_cc20_noNormD_L1
-# mse 去掉平方:
+# conLoss 的 mse 去掉平方,  类似WGAN, 不加gp全黑
+
+>>> 3dmmnist_wmw+_cd20_cc20_noNormD_L1_gp
 
