@@ -30,7 +30,7 @@ c_d_num = 20
 c_c_num = 20
 #input_dim: z =100 ,c_d =10 c_c = 2
 input_size = 64
-img_channel = 3
+img_channel = 1
 sample_num =400
 epoch = 150
 gp_mode = 'epoch150'
