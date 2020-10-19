@@ -3,13 +3,13 @@
 # ----------------Moving Mnist-------------
 观察 G和D中norm的作用
 
->>>3dmmnist_wmw+_cd20_cc20_noNorm
+>>>3dmmnist_wmw+_cd20_cc20_new
+#标准版 D和G的FC层 都 有 nrom
 
+>>>3dmmnist_wmw+_cd20_cc20_noNorm
 #取消了GD的fc和conv最后一层的norm, 结果：模式崩溃，单一图片
 
-
 >>> 3dmmnist_wmw+_cd20_cc20_noNormD
-
 #取消了D的fc和conv最后一层的norm,  结果：模式对应了，但是结果比D加了batch_norm的粗糙, 不过后面恢复了
 
 
@@ -17,4 +17,11 @@
 # conLoss 的 mse 去掉平方,  类似WGAN, 不加gp全黑
 
 >>> 3dmmnist_wmw+_cd20_cc20_noNormD_L1_gp
+# 原因是wgan的loss一直在增大，只有Clipping才行，但也达不到纳什均衡
+
+	！！！ 结论:只有D_noNorm 和 D_norm的标准mse可行 
+
+>>>3dmmnist_wmw+_cd20_cc20_lamb20_balence
+# 对称的 info, conLoss乘以20 
+
 
