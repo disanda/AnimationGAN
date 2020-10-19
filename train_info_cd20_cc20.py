@@ -270,14 +270,15 @@ for i in tqdm.trange(epoch):
 		#gradient_penalty = loss_norm_gp.gradient_penalty(functools.partial(D),D_cont_info,c_c,gp_mode='lp', sample_mode='dragan',y=y_info)
 		cont_loss = (D_cont_info - c_c)**2
 		info_loss = disc_loss + cont_loss*20
-		train_hist['info_loss'].append(info_loss.mean())
+		info_loss = info_loss.mean()
+		train_hist['info_loss'].append(info_loss.item())
 		info_loss.backward()
 		info_optimizer.step()
 		train_hist['per_epoch_time'].append(time.time() - epoch_start_time)
 		if ((j + 1) % 100) == 0:
 			with open(save_root+'setting.txt', 'a') as f:
 				print('----',file=f)
-				print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f, info_loss: %.8f" %((i + 1), (j + 1), train_loader.dataset.__len__() // batch_size, D_loss.item(), G_loss.item(), info_loss.mean()),file=f)
+				print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f, info_loss: %.8f" %((i + 1), (j + 1), train_loader.dataset.__len__() // batch_size, D_loss.item(), G_loss.item(), info_loss.item()),file=f)
 				print('----',file=f)
 				#print("gp: %.8f" %(gradient_penalty.mean()),file=f)
 # save2img
