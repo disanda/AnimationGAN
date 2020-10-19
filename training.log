@@ -3,8 +3,16 @@
 # ----------------Moving Mnist-------------
 观察 G和D中norm的作用
 
-3dmmnist_wmw+_cd20_cc20_noNorm
-#取消了GD的fc和conv最后一层的norm, 结果模式崩溃，单一图片
+>>>3dmmnist_wmw+_cd20_cc20_noNorm
 
-#取消了D的fc和conv最后一层的norm, 
+#取消了GD的fc和conv最后一层的norm, 结果：模式崩溃，单一图片
+
+
+>>> 3dmmnist_wmw+_cd20_cc20_noNormD
+
+#取消了D的fc和conv最后一层的norm,  结果：模式对应了，但是结果比D加了batch_norm的粗糙, 不过后面恢复了
+
+
+>>> 3dmmnist_wmw+_cd20_cc20_noNormD_L1
+# mse 去掉平方:
 

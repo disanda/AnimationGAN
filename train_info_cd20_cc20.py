@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='3dmmnist_wmw+_cd20_cc20_noNorm_D')
+parser.add_argument('--name', dest='experiment_name', default='3dmmnist_wmw+_cd20_cc20_noNorm_D_L1')
 args = parser.parse_args()
 
 
@@ -267,7 +267,7 @@ for i in tqdm.trange(epoch):
 		# print(D_cont.shape)
 		# print(c_c.shape)
 		# print('--------------')
-		cont_loss = MSE_loss(D_cont_info, c_c)
+		cont_loss = D_cont_info - c_c
 		info_loss = disc_loss + cont_loss
 		train_hist['info_loss'].append(info_loss.item())
 		info_loss.backward()
