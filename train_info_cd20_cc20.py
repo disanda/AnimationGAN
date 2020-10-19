@@ -14,7 +14,6 @@ import tqdm
 import random
 import loss_norm_gp
 import functools
-import gp
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
 parser.add_argument('--name', dest='experiment_name', default='3dmmnist_wmw+_cd20_cc20_noNorm_D_L1_gp')
@@ -270,8 +269,7 @@ for i in tqdm.trange(epoch):
 		# print('--------------')
 
 #GP
-		gradient_penalty = gp.calc_gradient_penalty(D,D_cont_info,c_c)
-
+		gradient_penalty = loss_norm_gp.gradient_penalty(functools.partial(D),D_cont_info,c_c,gp_mode='lp', sample_mode='dragan')
 		cont_loss = D_cont_info - c_c + gradient_penalty*10
 		info_loss = disc_loss.mean() + cont_loss.mean()
 		train_hist['info_loss'].append(info_loss.item())

@@ -65,39 +65,7 @@ def m_loss(a,b1,b2):
 
 
 #                                    gradient_penalty                                   
-
-#f是判别函数:D
-def gradient_penalty(f, real, fake, mode):
-    device = real.device
-    def _gradient_penalty(f, real, fake=None):
-        def _interpolate(a, b=None):
-            if b is None:   # interpolation in DRAGAN
-                beta = torch.rand(a.size()).to(device)
-                b = a + 0.5 * a.std() * beta
-            shape = [a.size(0)] + [1] * (a.dim() - 1)
-            alpha = torch.rand(shape).to(device)
-            inter = a + alpha * (b - a)
-            return inter
-        #x = torch.tensor(_interpolate(real, fake), requires_grad=True)
-        x = _interpolate(real, fake).clone().detach().requires_grad_(True)
-        pred = f(x)
-        if isinstance(pred, tuple):#查看pred是否是元组
-            pred = pred[0]
-        g = grad(pred, x, grad_outputs=torch.ones(pred.size()).to(device), create_graph=True)[0].view(x.size(0), -1)
-        gp = ((g.norm(p=2, dim=1) - 1) ** 2).mean()
-        return gp
-    if mode == 'wgan-gp':
-        gp = _gradient_penalty(f, real, fake)
-    elif mode == 'dragan':
-        gp = _gradient_penalty(f, real)
-    elif mode == 'none':
-        gp = torch.tensor(0.0).to(device)
-    else:
-        raise NotImplementedError
-    return gp
-
 # =sample method=
-
 def _sample_line(real, fake):
     shape = [real.size(0)] + [1] * (real.dim() - 1)#real.size(0),real第一维的个数/[1]*3 = [1,1,1] / real.dim()：real坐标数 如[1,1,1,1] dim为4
     alpha = torch.rand(shape, device=real.device)
@@ -113,7 +81,6 @@ def _sample_DRAGAN(real, fake):  # fake is useless
 
 
 # =gradient penalty method=
-
 def _norm(x):
     norm = x.view(x.size(0), -1).norm(p=2, dim=1)
     return norm
@@ -137,22 +104,23 @@ def _lipschitz_penalty(grad):
     return gp
 
 
-def gradient_penalty(f, real, fake, gp_mode, sample_mode):
+def gradient_penalty(f, real, fake, sample_mode, gp_mode):
     sample_fns = {
         'line': _sample_line,
         'real': lambda real, fake: real,
         'fake': lambda real, fake: fake,
         'dragan': _sample_DRAGAN,
-    }
+    } #sample_mode
+
     gp_fns = {
         '1-gp': _one_mean_gp,
         '0-gp': _zero_mean_gp,
         'lp': _lipschitz_penalty,
-    }
+    } #gp_mode
     if gp_mode == 'none':
         gp = torch.tensor(0, dtype=real.dtype, device=real.device)
     else:
-        x = sample_fns[sample_mode](real, fake).detach()
+        x = sample_fns[sample_mode](real, fake).detach() 
         x.requires_grad = True
         pred,_,_ = f(x)
         grad = torch.autograd.grad(pred, x, grad_outputs=torch.ones_like(pred), create_graph=True)[0]
