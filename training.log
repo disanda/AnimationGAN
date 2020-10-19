@@ -1,2 +1,7 @@
 # 3D face
+
+# Moving Mnist
 观察 G和D中norm的作用
+
+3dmmnist_wmw+_cd20_cc20_noNorm
+#取消了fc和conv最后一层的norm

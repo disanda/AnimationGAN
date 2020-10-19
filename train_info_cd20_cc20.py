@@ -5,7 +5,7 @@ import torch.nn as nn
 import os
 import numpy as np
 import itertools
-import model
+import model_v2 as model
 import argparse
 from PIL import Image
 import time
@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='3dmmnist_wmw+_cd20_cc20_new_v2')
+parser.add_argument('--name', dest='experiment_name', default='3dmmnist_wmw+_cd20_cc20_noNorm')
 args = parser.parse_args()
 
 
@@ -258,7 +258,7 @@ for i in tqdm.trange(epoch):
 		G_loss.backward(retain_graph=True)
 		G_optimizer.step()
 # information loss
-		D_optimizer.zero_grad()
+		D_optimizer.zero_grad() #这两个网络不清零，梯度就会乱掉,训练失败
 		G_optimizer.zero_grad()
 		y_info = G(z, c_c, c_d)
 		_,D_disc_info,D_cont_info = D(y_info)
