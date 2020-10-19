@@ -268,7 +268,7 @@ for i in tqdm.trange(epoch):
 		# print(c_c.shape)
 		# print('--------------')
 		cont_loss = D_cont_info - c_c
-		info_loss = disc_loss + cont_loss
+		info_loss = disc_loss.mean() + cont_loss.mean()
 		train_hist['info_loss'].append(info_loss.item())
 		info_loss.backward()
 		info_optimizer.step()
