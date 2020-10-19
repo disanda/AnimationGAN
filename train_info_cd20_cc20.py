@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='3dmmnist_wmw+_cd20_cc20_noNorm_D_L1_gp')
+parser.add_argument('--name', dest='experiment_name', default='3dmmnist_wmw+_cd20_cc20_noNorm_D_L2')
 args = parser.parse_args()
 
 
