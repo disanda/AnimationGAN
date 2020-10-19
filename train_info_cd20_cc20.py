@@ -269,8 +269,8 @@ for i in tqdm.trange(epoch):
 		# print('--------------')
 
 #GP
-		gradient_penalty = loss_norm_gp.gradient_penalty(functools.partial(D),D_cont_info,c_c,gp_mode='lp', sample_mode='dragan',y=y_info)
-		cont_loss = D_cont_info - c_c + gradient_penalty
+		#gradient_penalty = loss_norm_gp.gradient_penalty(functools.partial(D),D_cont_info,c_c,gp_mode='lp', sample_mode='dragan',y=y_info)
+		cont_loss = (D_cont_info - c_c)**2
 		info_loss = disc_loss.mean() + cont_loss.mean()
 		train_hist['info_loss'].append(info_loss.item())
 		info_loss.backward()
