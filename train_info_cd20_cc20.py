@@ -277,7 +277,7 @@ for i in tqdm.trange(epoch):
 		if ((j + 1) % 100) == 0:
 			with open(save_root+'setting.txt', 'a') as f:
 				print('----',file=f)
-				print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f, info_loss: %.8f" %((i + 1), (j + 1), train_loader.dataset.__len__() // batch_size, D_loss.item(), G_loss.item(), info_loss.item()),file=f)
+				print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f, info_loss: %.8f" %((i + 1), (j + 1), train_loader.dataset.__len__() // batch_size, D_loss.item(), G_loss.item(), info_loss.mean()),file=f)
 				print('----',file=f)
 				#print("gp: %.8f" %(gradient_penalty.mean()),file=f)
 # save2img
