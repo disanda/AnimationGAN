@@ -22,6 +22,9 @@
 	！！！ 结论:只有D_noNorm 和 D_norm的标准mse可行 
 
 >>>3dmmnist_wmw+_cd20_cc20_lamb20_balence
-# 对称的 info, conLoss乘以20 
+# 对称的norm和activition , conLoss乘以20 结果崩了
+
+>>>3dmmnist_wmw+_cd20_cc20_lamb20_noNormD
+# D没有norm最后一层有lrelu
 
 
