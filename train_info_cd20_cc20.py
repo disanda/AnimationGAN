@@ -270,7 +270,7 @@ for i in tqdm.trange(epoch):
 		#gradient_penalty = loss_norm_gp.gradient_penalty(functools.partial(D),D_cont_info,c_c,gp_mode='lp', sample_mode='dragan',y=y_info)
 		cont_loss = (D_cont_info - c_c)**2
 		info_loss = disc_loss + cont_loss*20
-		train_hist['info_loss'].append(info_loss.item())
+		train_hist['info_loss'].append(info_loss.mean())
 		info_loss.backward()
 		info_optimizer.step()
 		train_hist['per_epoch_time'].append(time.time() - epoch_start_time)
