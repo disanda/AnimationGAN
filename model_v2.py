@@ -62,7 +62,7 @@ class discriminator_mwm(nn.Module):
             nn.BatchNorm1d(1024),
             nn.LeakyReLU(0.2),
             nn.Linear(1024, self.output_dim + self.len_continuous_code + self.len_discrete_code),
-            nn.BatchNorm1d(1024),
+            nn.BatchNorm1d(self.output_dim + self.len_continuous_code + self.len_discrete_code),
             nn.LeakyReLU(0.2),
             # nn.Sigmoid(),
         )
