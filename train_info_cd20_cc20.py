@@ -281,7 +281,7 @@ for i in tqdm.trange(epoch):
 				print('----',file=f)
 				print("Epoch: [%2d] [%4d/%4d] D_loss: %.8f, G_loss: %.8f, info_loss: %.8f" %((i + 1), (j + 1), train_loader.dataset.__len__() // batch_size, D_loss.item(), G_loss.item(), info_loss.item()),file=f)
 				print('----',file=f)
-				print("gp: %.8f" %(gradient_penalty.mean()),file=f)
+				#print("gp: %.8f" %(gradient_penalty.mean()),file=f)
 # save2img
 	with torch.no_grad():
 		G.eval()
