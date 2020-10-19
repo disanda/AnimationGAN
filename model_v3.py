@@ -12,10 +12,10 @@ class generator_mwm(nn.Module):
         self.len_discrete_code = len_discrete_code  # categorical distribution (i.e. label)
         self.len_continuous_code = len_continuous_code  # gaussian distribution (e.g. rotation, thickness)
         self.fc = nn.Sequential(
-            nn.Linear(self.z_dim + self.len_discrete_code + self.len_continuous_code, 512),
-            nn.BatchNorm1d(512),
+            nn.Linear(self.z_dim + self.len_discrete_code + self.len_continuous_code, 1024),
+            nn.BatchNorm1d(1024),
             nn.ReLU(),
-            nn.Linear(512, 1024),
+            nn.Linear(1024, 1024),
             nn.BatchNorm1d(1024),
             nn.ReLU(),
             nn.Linear(1024, 128 * (self.input_size // 8) * (self.input_size // 8)),#[1024,128*8*8]-input_size=32
@@ -64,10 +64,10 @@ class discriminator_mwm(nn.Module):
             nn.Linear(128 * (self.input_size // 8) * (self.input_size // 8), 1024),
             nn.BatchNorm1d(1024),
             nn.LeakyReLU(0.2),
-            nn.Linear(1024,512),
-            nn.BatchNorm1d(512),
+            nn.Linear(1024,1024),
+            nn.BatchNorm1d(1024),
             nn.LeakyReLU(0.2),
-            nn.Linear(512, self.output_dim + self.len_continuous_code + self.len_discrete_code),
+            nn.Linear(1024, self.output_dim + self.len_continuous_code + self.len_discrete_code),
             #nn.BatchNorm1d(self.output_dim + self.len_continuous_code + self.len_discrete_code),
             nn.LeakyReLU(0.2),
             # nn.Sigmoid(),
