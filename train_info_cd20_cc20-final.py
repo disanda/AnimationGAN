@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='movingmnist_origin_wmw+_cd10_cc12_v3')
+parser.add_argument('--name', dest='experiment_name', default='movingmnist_origin_wmw+_cd20_cc20_v3')
 args = parser.parse_args()
 
 
@@ -25,9 +25,9 @@ gpu_mode = True
 #SUPERVISED = True
 SUPERVISED = False
 batch_size = 64
-z_dim_num = 32
-c_d_num = 10
-c_c_num = 12
+z_dim_num = 40
+c_d_num = 20
+c_c_num = 20
 #input_dim: z =100 ,c_d =10 c_c = 2
 input_size = 64
 img_channel = 1
@@ -161,7 +161,7 @@ for i in range(sample_num//c_d_num):		#每c_d个noise,c_d相同,c_c不同
 	sample_c2[i*c_d_num:(i+1)*c_d_num,i%c_c_num] = temp_c
 
 #----------------------固定测试变量--------------------
-sample_num_3 = 120 # 10*12, c_d10个 c_c 12个
+sample_num_3 = 200 # c_d 20个 c_c 20个
 
 sample_z3 = torch.randn(sample_num_3, z_dim_num)
 
