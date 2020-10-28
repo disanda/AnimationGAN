@@ -160,6 +160,22 @@ for i in range(sample_num//c_d_num):		#每c_d个noise,c_d相同,c_c不同
 	sample_d2[i*c_d_num:(i+1)*c_d_num, d_label] = 1
 	sample_c2[i*c_d_num:(i+1)*c_d_num,i%c_c_num] = temp_c
 
+#----------------------固定测试变量--------------------
+sample_num =120 # 10*12, c_d10个 c_c 12个
+
+sample_z3 = torch.randn(sample_num, z_dim_num)
+
+sample_d3 = torch.zeros(sample_num, c_d_num) #每12个，c_d换一个维度
+for i in range(10):
+	for j in range(12): 
+		sample_d[j+i*12,i]=1
+
+sample_c3 = torch.zeros(sample_num, c_c_num) #每12个内，c_c值变换, 之后c_c换一个维度
+temp = torch.linspace(-10,10,steps=12)
+for i in range(10):
+	for j in range(12): 
+		sample_c[j+i*12,i]=temp[j]
+
 #gpu
 if gpu_mode == True:
 	sample_z, sample_d, sample_c, sample_z2, sample_d2, sample_c2 = \
@@ -291,6 +307,9 @@ for i in tqdm.trange(epoch):
 		samples = G(sample_z2, sample_c2, sample_d2)
 		samples = (samples + 1) / 2
 		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_c.png' % i, nrow=20)
+		samples = G(sample_z3, sample_c3, sample_d3)
+		samples = (samples + 1) / 2
+		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_3.png' % i, nrow=20)
 		torch.save({'epoch': epoch + 1,'G': G.state_dict()},'%s/Epoch_(%d).ckpt' % (ckpt_dir, epoch + 1))#save model
 		# with open(save_root+'setting.txt', 'a') as f:
 		# 		print('----',file=f)
