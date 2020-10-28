@@ -149,9 +149,7 @@ for i in range(10):
  
 #gpu
 if gpu_mode == True:
-	sample_z, sample_d, sample_c, sample_z2, sample_d2, sample_c2 = \
-	sample_z.cuda(), sample_d.cuda(), sample_c.cuda(), \
-	sample_z2.cuda(), sample_d2.cuda(), sample_c2.cuda()
+	sample_z, sample_d, sample_c,  = sample_z.cuda(), sample_d.cuda(), sample_c.cuda()
 
 #------------------------model setting-----------------
 
