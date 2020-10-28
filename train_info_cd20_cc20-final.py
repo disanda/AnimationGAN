@@ -26,8 +26,8 @@ gpu_mode = True
 SUPERVISED = False
 batch_size = 64
 z_dim_num = 32
-c_d_num = 20
-c_c_num = 20
+c_d_num = 10
+c_c_num = 12
 #input_dim: z =100 ,c_d =10 c_c = 2
 input_size = 64
 img_channel = 1
@@ -131,7 +131,7 @@ train_loader = torch.utils.data.DataLoader(
 
 
 
-# 固定noise和cc，每c_d个变一次c_d
+# 固定noise和cc，每行一个c_d
 sample_z = torch.zeros((sample_num, z_dim_num))
 temp = torch.zeros((c_d_num, 1))
 for i in range(sample_num//c_d_num):
@@ -147,7 +147,7 @@ for i in range(sample_num//c_d_num):
 sample_d = torch.zeros((sample_num, c_d_num)).scatter_(1, temp_d.type(torch.LongTensor), 1)
 sample_c = torch.zeros((sample_num, c_c_num))
 
-# 观察单一变量，固定其他变量
+# 观察c_c变量，固定其他变量(置0)
 sample_z2 = torch.rand((1, z_dim_num)).expand(sample_num, z_dim_num) #每个样本的noize相同
 sample_d2 = torch.zeros(sample_num, c_d_num)#[200,c_d]
 
@@ -161,16 +161,16 @@ for i in range(sample_num//c_d_num):		#每c_d个noise,c_d相同,c_c不同
 	sample_c2[i*c_d_num:(i+1)*c_d_num,i%c_c_num] = temp_c
 
 #----------------------固定测试变量--------------------
-sample_num =120 # 10*12, c_d10个 c_c 12个
+sample_num_3 = 120 # 10*12, c_d10个 c_c 12个
 
-sample_z3 = torch.randn(sample_num, z_dim_num)
+sample_z3 = torch.randn(sample_num_3, z_dim_num)
 
-sample_d3 = torch.zeros(sample_num, c_d_num) #每12个，c_d换一个维度
+sample_d3 = torch.zeros(sample_num_3, c_d_num) #每12个，c_d换一个维度
 for i in range(10):
 	for j in range(12): 
 		sample_d[j+i*12,i]=1
 
-sample_c3 = torch.zeros(sample_num, c_c_num) #每12个内，c_c值变换, 之后c_c换一个维度
+sample_c3 = torch.zeros(sample_num_3, c_c_num) #每12个内，c_c值变换, 之后c_c换一个维度
 temp = torch.linspace(-10,10,steps=12)
 for i in range(10):
 	for j in range(12): 
