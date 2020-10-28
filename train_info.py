@@ -269,8 +269,8 @@ for i in tqdm.trange(epoch):
 		samples = (samples + 1) / 2
 		torchvision.utils.save_image(samples, save_dir+'/%d_Epoch.png' % i, nrow=12)
 		torch.save({'epoch': epoch + 1,'G': G.state_dict()},'%s/Epoch_(%d).pth' % (ckpt_dir, epoch + 1))#save model
-    train_hist['total_time'].append(time.time() - start_time)
-    with open(save_root+'setting.txt', 'a') as f:
+	train_hist['total_time'].append(time.time() - start_time)
+	with open(save_root+'setting.txt', 'a') as f:
 				print('----',file=f)
 				print(train_hist,file=f)
 				print('----',file=f)
