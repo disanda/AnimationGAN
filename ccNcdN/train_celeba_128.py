@@ -14,19 +14,18 @@ import tqdm
 
 # command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='CGAN_MNIST_Info_dc6_cc1')
+parser.add_argument('--name', dest='experiment_name', default='Celeba128_dim256_cd28_cc28')
 parser.add_argument('--info', dest='self_animation', default=True)
 args = parser.parse_args()
 
-z_dim = 100
+z_dim = 128
 epoch = 60
 batch_size = 64
 d_learning_rate = 0.0002
 g_learning_rate = 0.001
 n_d = 1
-d_dim = 10 # 离散10 ，连续2 
-c_dim = 2
-dim=d_dim+c_dim
+d_dim = 28 # 离散10 ，连续2 
+c_dim = 28
 experiment_name = args.experiment_name
 gp_mode = 'none'#'dragan', 'wgan-gp'
 gp_coef = 1.0
@@ -68,7 +67,6 @@ train_loader = torch.utils.data.DataLoader(
 # model
 D = model.Discriminator_v1_1(x_dim=1, dim=dim).to(device)
 G = model.Generator_v1_1(x_dim=z_dim, dim=dim).to(device)
-M = model.Mow(dim=13).to(device)
 
 #save model in txt
 with open('./output/%s/setting.txt' % experiment_name, 'a') as f:
@@ -76,9 +74,8 @@ with open('./output/%s/setting.txt' % experiment_name, 'a') as f:
     print(G,file=f)
     print('----',file=f)
     print(D,file=f)
-    if info == True:
-        print('----',file=f)
-        print(M,file=f) 
+
+
 
 # gan loss function
 d_loss_fn, g_loss_fn = loss_norm_gp.get_losses_fn('gan') #'gan', 'lsgan', 'wgan', 'hinge_v1', 'hinge_v2'
@@ -87,7 +84,7 @@ d_loss_fn, g_loss_fn = loss_norm_gp.get_losses_fn('gan') #'gan', 'lsgan', 'wgan'
 # optimizer
 d_optimizer = torch.optim.Adam(D.parameters(), lr=d_learning_rate, betas=(0.5, 0.999))
 g_optimizer = torch.optim.Adam(G.parameters(), lr=g_learning_rate, betas=(0.5, 0.999))
-m_optimizer = torch.optim.Adam(M.parameters(), lr=g_learning_rate, betas=(0.5, 0.999))
+info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()),lr=0.0001,betas=(0.6, 0.95),amsgrad=True)#G,D都更新
 
 # =                                    train                                   =
 
@@ -184,14 +181,7 @@ for ep in tqdm.trange(epoch):
 
             writer.add_scalar('G/g_gan_loss', g_gan_loss.data.cpu().numpy(), global_step=step)
 
-# train M
-        m = M(m_c.detach())#in:[-1,512,32,32],out:[-1,4]
-        loss1 = loss_norm_gp.m_loss(mc,m[-1,0],m[-1,1])
-        loss2 = loss_norm_gp.m_loss(mc,m[-1,2],m[-1,3])
-        loss = loss1+loss2
-        M.zero_grad()
-        loss.backward()
-        m_optimizer.step()
+
 
 # sample
         if step % 100 == 0:

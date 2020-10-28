@@ -5,7 +5,7 @@ import torch.nn as nn
 import os
 import numpy as np
 import itertools
-import model
+import model.model_v2 as net
 import argparse
 from PIL import Image
 import time
@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='3dface_wmw+_cd20_cc5')
+parser.add_argument('--name', dest='experiment_name', default='movingmnist_wmw+_cd10_cc12')
 args = parser.parse_args()
 
 
@@ -25,13 +25,12 @@ gpu_mode = True
 #SUPERVISED = True
 SUPERVISED = False
 batch_size = 100
-z_dim_num = 100
-c_d_num = 20
-c_c_num = 5
+z_dim_num = 104
+c_d_num = 10
+c_c_num = 12
 #input_dim: z =100 ,c_d =10 c_c = 2
 input_size = 64
-img_channel = 3
-sample_num =400
+img_channel = 1
 epoch = 150
 gp_mode = 'epoch150'
 experiment_name = args.experiment_name+'_'+gp_mode
@@ -131,35 +130,23 @@ train_loader = torch.utils.data.DataLoader(face3d_dataset, batch_size=batch_size
 
 
 
-# 固定noise和cc，每c_d个变一次c_d
-sample_z = torch.zeros((sample_num, z_dim_num))
-temp = torch.zeros((c_d_num, 1))
-for i in range(sample_num//c_d_num):
-	sample_z[i * c_d_num] = torch.rand(1, z_dim_num)#为连续c_d个的样本赋值。
-	for j in range(c_d_num):
-		sample_z[i * c_d_num + j] = sample_z[i * c_d_num]#相同c_d的noize都相同
+#----------------------固定测试变量--------------------
+sample_num =120 # 10*12, c_d10个 c_c 12个
 
-for i in range(c_d_num):
-	temp[i, 0] = i #每一个标签
-temp_d = torch.zeros((sample_num, 1))
-for i in range(sample_num//c_d_num):
-	temp_d[i * c_d_num: (i + 1) * c_d_num] = temp[i%c_d_num] #每c_d个的d一样
-sample_d = torch.zeros((sample_num, c_d_num)).scatter_(1, temp_d.type(torch.LongTensor), 1)
-sample_c = torch.zeros((sample_num, c_c_num))
+sample_z = torch.randn(sample_num, z_dim_num)
 
-# 观察单一变量，固定其他变量
-sample_z2 = torch.rand((1, z_dim_num)).expand(sample_num, z_dim_num) #每个样本的noize相同
-sample_d2 = torch.zeros(sample_num, c_d_num)#[200,c_d]
+sample_d = torch.zeros(sample_num, c_d_num) #每12个，c_d换一个维度
+for i in range(10):
+	for j in range(12): 
+		sample_d[j+i*12,i]=1
 
-temp_c = torch.linspace(-1, 1, c_d_num)		#c_d_num个范围在-1->1的等差数列
-sample_c2 = torch.zeros((sample_num, c_c_num))#[200,c_c]
+sample_c = torch.zeros(sample_num, c_c_num) #每12个内，c_c值变换, 之后c_c换一个维度
+temp = torch.linspace(-10,10,steps=12)
+for i in range(10):
+	for j in range(12): 
+		sample_c[j+i*12,i]=temp[j]
 
-for i in range(sample_num//c_d_num):		#每c_d个noise,c_d相同,c_c不同
-	#d_label = random.randint(0,c_d_num-1)
-	d_label = i%c_d_num
-	sample_d2[i*c_d_num:(i+1)*c_d_num, d_label] = 1
-	sample_c2[i*c_d_num:(i+1)*c_d_num,i%c_c_num] = temp_c
-
+ 
 #gpu
 if gpu_mode == True:
 	sample_z, sample_d, sample_c, sample_z2, sample_d2, sample_c2 = \
@@ -168,8 +155,8 @@ if gpu_mode == True:
 
 #------------------------model setting-----------------
 
-G = model.generator_mwm(z_dim=z_dim_num, output_channel=img_channel, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)  
-D = model.discriminator_mwm(input_channel=img_channel, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
+G = net.generator_mwm(z_dim=z_dim_num, output_channel=img_channel, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)  
+D = net.discriminator_mwm(input_channel=img_channel, output_dim=1, input_size=input_size, len_discrete_code=c_d_num, len_continuous_code=c_c_num)
 G_optimizer = optim.Adam(G.parameters(),  betas=(0.5, 0.99),amsgrad=True)
 D_optimizer = optim.Adam(D.parameters(), lr=0.0002,betas=(0.5, 0.99),amsgrad=True)
 info_optimizer = optim.Adam(itertools.chain(G.parameters(), D.parameters()),lr=0.0001,betas=(0.6, 0.95),amsgrad=True)#G,D都更新
@@ -280,22 +267,10 @@ for i in tqdm.trange(epoch):
 		image_frame_dim = int(np.floor(np.sqrt(sample_num)))
 		samples = G(sample_z, sample_c, sample_d)
 		samples = (samples + 1) / 2
-		torchvision.utils.save_image(samples, save_dir+'/%d_Epoch—c_d.png' % i, nrow=20)
-		samples = G(sample_z2, sample_c2, sample_d2)
-		samples = (samples + 1) / 2
-		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_c.png' % i, nrow=20)
-		torch.save({'epoch': epoch + 1,'G': G.state_dict()},'%s/Epoch_(%d).ckpt' % (ckpt_dir, epoch + 1))#save model
-		# with open(save_root+'setting.txt', 'a') as f:
-		# 		print('----',file=f)
-		# 		print(train_hist,file=f)
-		# 		print('----',file=f)
-		# print('-------------')
-		# print(D_real.shape)
-		# print(d_real_flag.shape)
-		# print('--------------')
-
-        # self.train_hist['total_time'].append(time.time() - start_time)
-        # print("Avg one epoch time: %.2f, total %d epochs time: %.2f" % (np.mean(self.train_hist['per_epoch_time']),self.i, self.train_hist['total_time'][0]))
-        # print("Training finish!... save training results")
-        # self.save()
-        # self.loss_plot(self.train_hist, os.path.join(self.save_dir, self.dataset, self.model_name), self.model_name)
+		torchvision.utils.save_image(samples, save_dir+'/%d_Epoch.png' % i, nrow=12)
+		torch.save({'epoch': epoch + 1,'G': G.state_dict()},'%s/Epoch_(%d).pth' % (ckpt_dir, epoch + 1))#save model
+    train_hist['total_time'].append(time.time() - start_time)
+    with open(save_root+'setting.txt', 'a') as f:
+				print('----',file=f)
+				print(train_hist,file=f)
+				print('----',file=f)
