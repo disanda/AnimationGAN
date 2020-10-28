@@ -16,7 +16,7 @@ import loss_norm_gp
 import functools
 #-----------------------prepare of args-------------------
 parser = argparse.ArgumentParser()
-parser.add_argument('--name', dest='experiment_name', default='movingmnist_origin_wmw+_cd10_cc12')
+parser.add_argument('--name', dest='experiment_name', default='movingmnist_origin_wmw+_cd10_cc12_v3')
 args = parser.parse_args()
 
 
