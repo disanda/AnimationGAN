@@ -146,7 +146,6 @@ for i in range(10):
 	for j in range(12): 
 		sample_c[j+i*12,i]=temp[j]
 
- 
 #gpu
 if gpu_mode == True:
 	sample_z, sample_d, sample_c,  = sample_z.cuda(), sample_d.cuda(), sample_c.cuda()

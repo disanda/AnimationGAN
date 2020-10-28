@@ -307,7 +307,7 @@ for i in tqdm.trange(epoch):
 		samples = G(sample_z2, sample_c2, sample_d2)
 		samples = (samples + 1) / 2
 		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_c.png' % i, nrow=20)
-		samples = G(sample_z3, sample_c3, sample_d3)
+		samples = G(sample_z3.cuda(), sample_c3.cuda(), sample_d3.cuda())
 		samples = (samples + 1) / 2
 		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_3.png' % i, nrow=20)
 		torch.save({'epoch': epoch + 1,'G': G.state_dict()},'%s/Epoch_(%d).ckpt' % (ckpt_dir, epoch + 1))#save model
