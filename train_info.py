@@ -30,7 +30,7 @@ c_d_num = 10
 c_c_num = 12
 #input_dim: z =100 ,c_d =10 c_c = 2
 input_size = 64
-img_channel = 1
+img_channel = 3 # moving mnist也被处理成 3通道了
 epoch = 150
 gp_mode = 'epoch150'
 experiment_name = args.experiment_name+'_'+gp_mode
