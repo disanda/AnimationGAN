@@ -251,7 +251,7 @@ for i in tqdm.trange(epoch):
 			y, z, c_d, c_c = y.cuda(), z.cuda(), c_d.cuda(), c_c.cuda()
 # update D network
 		D_optimizer.zero_grad()
-		y_f = G(z, c_c, c_d)
+		y_f = G(z, c_d, c_c)
 		D_real, _, _ = D(y)
 		D_fake, _, _ = D(y_f)
 		D_real_loss = BCE_loss(D_real, d_real_flag)#1
@@ -266,7 +266,7 @@ for i in tqdm.trange(epoch):
 		D_optimizer.step()
 # update G network
 		G_optimizer.zero_grad()
-		y_f = G(z, c_c, c_d)
+		y_f = G(z, c_d, c_c)
 		D_fake,D_disc,D_cont = D(y_f)
 		G_loss = BCE_loss(D_fake, d_real_flag)
 		#G_loss = g_loss_fn(D_fake)
@@ -276,7 +276,7 @@ for i in tqdm.trange(epoch):
 # information loss
 		D_optimizer.zero_grad() #这两个网络不清零，梯度就会乱掉,训练失败
 		G_optimizer.zero_grad()
-		y_info = G(z, c_c, c_d)
+		y_info = G(z, c_d, c_c)
 		_,D_disc_info,D_cont_info = D(y_info)
 		disc_loss = CE_loss(D_disc_info, torch.max(c_d, 1)[1])#第二个是将Label由one-hot转化为10进制数组
 		# print('--------------')
@@ -301,13 +301,13 @@ for i in tqdm.trange(epoch):
 	with torch.no_grad():
 		G.eval()
 		image_frame_dim = int(np.floor(np.sqrt(sample_num)))
-		samples = G(sample_z, sample_c, sample_d)
+		samples = G(sample_z, sample_d, sample_c)
 		samples = (samples + 1) / 2
 		torchvision.utils.save_image(samples, save_dir+'/%d_Epoch—c_d.png' % i, nrow=20)
-		samples = G(sample_z2, sample_c2, sample_d2)
+		samples = G(sample_z2, sample_d2, sample_c2)
 		samples = (samples + 1) / 2
 		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_c.png' % i, nrow=20)
-		samples = G(sample_z3.cuda(), sample_c3.cuda(), sample_d3.cuda())
+		samples = G(sample_z3.cuda(), sample_d3.cuda(), sample_c3.cuda())
 		samples = (samples + 1) / 2
 		torchvision.utils.save_image(samples, save_dir + '/%d_Epoch-c_3.png' % i, nrow=20)
 		torch.save({'epoch': epoch + 1,'G': G.state_dict()},'%s/Epoch_(%d).ckpt' % (ckpt_dir, epoch + 1))#save model
