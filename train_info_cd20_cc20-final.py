@@ -5,7 +5,7 @@ import torch.nn as nn
 import os
 import numpy as np
 import itertools
-import model_v3 as model
+import model.model_v2 as model
 import argparse
 from PIL import Image
 import time
