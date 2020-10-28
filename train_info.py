@@ -243,6 +243,8 @@ for i in tqdm.trange(epoch):
 		G_loss.backward(retain_graph=True)
 		G_optimizer.step()
 # information loss
+		D_optimizer.zero_grad()
+		G_optimizer.zero_grad()
 		y_info = G(z, c_c, c_d)
 		_,D_disc_info,D_cont_info = D(y_info)
 		disc_loss = CE_loss(D_disc_info, torch.max(c_d, 1)[1])#第二个是将Label由one-hot转化为10进制数组
