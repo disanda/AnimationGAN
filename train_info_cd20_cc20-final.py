@@ -160,6 +160,22 @@ for i in range(sample_num//c_d_num):		#每c_d个noise,c_d相同,c_c不同
 	sample_d2[i*c_d_num:(i+1)*c_d_num, d_label] = 1
 	sample_c2[i*c_d_num:(i+1)*c_d_num,i%c_c_num] = temp_c
 
+#----------------------固定测试变量--------------------
+sample_num_3 = 200 # c_d 20个 c_c 20个
+
+sample_z3 = torch.randn(sample_num_3, z_dim_num)
+
+sample_d3 = torch.zeros(sample_num_3, c_d_num) #每12个，c_d换一个维度
+for i in range(10):
+	for j in range(12): 
+		sample_d[j+i*12,i]=1
+
+sample_c3 = torch.zeros(sample_num_3, c_c_num) #每12个内，c_c值变换, 之后c_c换一个维度
+temp = torch.linspace(-10,10,steps=12)
+for i in range(10):
+	for j in range(12): 
+		sample_c[j+i*12,i]=temp[j]
+
 
 #gpu
 if gpu_mode == True:
