@@ -1,5 +1,7 @@
 # AnimationGAN
 
+This is code of [SSL_GAN](https://www.researchgate.net/publication/342909538_Self-Supervised_Animation_Synthesis_Through_Adversarial_Training)
+
   >技术线：CGAN-ACGAN-INFOGAN
 
 这是论文[SSL_GAN](https://www.researchgate.net/publication/342909538_Self-Supervised_Animation_Synthesis_Through_Adversarial_Training)的源码
